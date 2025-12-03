@@ -21,7 +21,6 @@ function WindowComponent({
   onMaximize,
   onFocus,
   onUpdatePosition,
-  onUpdateSize,
   isFocused
 }: WindowProps) {
   const [isDragging, setIsDragging] = useState(false);

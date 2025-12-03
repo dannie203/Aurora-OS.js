@@ -125,7 +125,7 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
 
   const getNodeAtPath = useCallback((path: string): FileNode | null => {
     if (path === '/') return fileSystem;
-    
+
     const parts = path.split('/').filter(p => p);
     let current: FileNode | null = fileSystem;
 
