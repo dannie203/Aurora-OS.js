@@ -48,12 +48,6 @@ A modern, web-based desktop operating system interface built with React, Tailwin
     npm run build
     ```
 
-## Maintenance
-
-### Manual Triggers
-- **CI / Tests**: Go to **Actions** tab > Select workflow > Click **Run workflow**.
-- **Dependabot**: Go to **Insights** tab > **Dependency graph** > **Dependabot** > Click **Check for updates**.
-
 ### Testing
 This project uses **Vitest** for unit & integration testing.
 ```bash
