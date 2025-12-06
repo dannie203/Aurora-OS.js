@@ -53,7 +53,7 @@ export function Messages() {
   const content = (
     <div className="flex h-full">
       {/* Conversation List */}
-      <div className="w-80 border-r border-white/10 overflow-y-auto flex flex-col">
+      <div className="w-[30%] min-w-[250px] max-w-xs border-r border-white/10 overflow-y-auto flex flex-col shrink-0">
         <div className="p-3">
           <input
             type="text"

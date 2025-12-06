@@ -1,5 +1,11 @@
 # Version History
 
+## v0.6.2
+- **Settings Grid Layouts**: Standardized grids in Appearance, Theme Mode, and Theme sections with fixed aspect ratios (1:1 and 16:9) for consistent responsive design.
+- **Theme Enhancements**: Implemented dynamic gradients for Theme Mode cards (Neutral/Contrast) and introduced a diverse "2025" Color Palette.
+- **Dynamic Versioning**: "About" tab now displays the live application version from package.json.
+- **Default Preferences**: Updated default accent color to Indigo (#5755e4) and fixed compatibility with HTML color inputs.
+
 ## v0.6.1
 - **Desktop Mirroring**: Live synchronization between `~/Desktop` directory and the Desktop UI.
 - **Terminal App Launch**: Launch apps (Finder, Browser, etc.) via Terminal with argument support (`Finder /home`).

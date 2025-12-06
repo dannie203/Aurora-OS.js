@@ -5,6 +5,8 @@ import { Checkbox } from './ui/checkbox';
 import { AppTemplate } from './apps/AppTemplate';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
 import { softReset, hardReset, getStorageStats, formatBytes } from '../utils/memory';
+import { getComplementaryColor } from '../utils/colors';
+import pkg from '../../package.json';
 
 const settingsSidebar = {
   sections: [
@@ -31,14 +33,14 @@ const settingsSidebar = {
 };
 
 const presetColors = [
-  { name: 'Blue', value: '#3b82f6' },
-  { name: 'Purple', value: '#a855f7' },
-  { name: 'Pink', value: '#ec4899' },
-  { name: 'Red', value: '#ef4444' },
-  { name: 'Orange', value: '#f97316' },
-  { name: 'Green', value: '#10b981' },
-  { name: 'Teal', value: '#14b8a6' },
-  { name: 'Cyan', value: '#06b6d4' },
+  { name: 'Carbon', value: '#52525b' },   // Zinc-600 (Modern Neutral)
+  { name: 'Crimson', value: '#e11d48' },  // Rose-600 (Vibrant Red)
+  { name: 'Amber', value: '#f59e0b' },    // Amber-500 (Warm Gold)
+  { name: 'Emerald', value: '#10b981' },  // Emerald-500 (Crisp Green)
+  { name: 'Azure', value: '#3b82f6' },    // Blue-500 (Classic Tech Blue)
+  { name: 'Indigo', value: '#5755e4' },   // Indigo-500 (Deep Modern Blue)
+  { name: 'Violet', value: '#8b5cf6' },   // Violet-500 (Bright Purple)
+  { name: 'Fuchsia', value: '#d946ef' },  // Fuchsia-500 (Neon Pink)
 ];
 
 export function Settings() {
@@ -99,7 +101,7 @@ export function Settings() {
                       setAccentColor(color.value);
                       setCustomColor(color.value);
                     }}
-                    className={`relative h-12 rounded-lg transition-all ${accentColor === color.value
+                    className={`relative w-full aspect-square rounded-lg transition-all ${accentColor === color.value
                       ? 'ring-2 ring-white ring-offset-2 ring-offset-gray-800/40'
                       : 'hover:scale-105'
                       }`}
@@ -107,7 +109,7 @@ export function Settings() {
                   >
                     {accentColor === color.value && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-4 h-4 bg-white rounded-full" />
+                        <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
                       </div>
                     )}
                   </button>
@@ -154,13 +156,13 @@ export function Settings() {
               <label className="text-sm text-white/80 mb-3 block">Preview</label>
               <div className="flex gap-3">
                 <button
-                  className="px-4 py-2 rounded-lg text-white transition-all"
+                  className="px-4 py-2 rounded-lg text-white transition-all w-1/2 aspect-[3/1] flex items-center justify-center"
                   style={{ backgroundColor: accentColor }}
                 >
                   Primary Button
                 </button>
                 <button
-                  className="px-4 py-2 rounded-lg transition-all border-2"
+                  className="px-4 py-2 rounded-lg transition-all border-2 w-1/2 aspect-[3/1] flex items-center justify-center"
                   style={{ borderColor: accentColor, color: accentColor }}
                 >
                   Outlined Button
@@ -179,43 +181,56 @@ export function Settings() {
             <div className="grid grid-cols-3 gap-4">
               <button
                 onClick={() => setThemeMode('neutral')}
-                className={`p-4 rounded-lg border-2 transition-all ${themeMode === 'neutral'
-                  ? 'border-white/30 bg-white/10'
-                  : 'border-white/10 hover:border-white/20 bg-black/20'
-                  }`}
-              >
-                <div className="w-full h-16 bg-gradient-to-br from-gray-800 to-gray-900 rounded mb-3 border border-white/10" />
-                <div className="text-white text-sm font-medium mb-1">Neutral</div>
-                <div className="text-white/50 text-xs">Natural grays only</div>
-              </button>
-
-              <button
-                onClick={() => setThemeMode('shades')}
-                className={`p-4 rounded-lg border-2 transition-all ${themeMode === 'shades'
+                className={`p-4 rounded-lg border-2 transition-all h-full flex flex-col ${themeMode === 'neutral'
                   ? 'border-white/30 bg-white/10'
                   : 'border-white/10 hover:border-white/20 bg-black/20'
                   }`}
               >
                 <div
-                  className="w-full h-16 rounded mb-3 border border-white/10"
+                  className="w-full rounded mb-3 border border-white/10 shrink-0"
                   style={{
-                    background: `linear-gradient(to bottom right, ${accentColor}40, ${accentColor}80)`
+                    aspectRatio: '1/1',
+                    background: `linear-gradient(to bottom right, ${accentColor}20, #1f2937)`
                   }}
                 />
-                <div className="text-white text-sm font-medium mb-1">Shades</div>
-                <div className="text-white/50 text-xs">Accent color tints</div>
+                <div className="text-white text-sm font-medium mb-1">Neutral</div>
+                <div className="text-white/50 text-xs text-left">Natural grays only</div>
               </button>
 
               <button
-                onClick={() => setThemeMode('contrast')}
-                className={`p-4 rounded-lg border-2 transition-all ${themeMode === 'contrast'
+                onClick={() => setThemeMode('shades')}
+                className={`p-4 rounded-lg border-2 transition-all h-full flex flex-col ${themeMode === 'shades'
                   ? 'border-white/30 bg-white/10'
                   : 'border-white/10 hover:border-white/20 bg-black/20'
                   }`}
               >
-                <div className="w-full h-16 rounded mb-3 border border-white/10 bg-gradient-to-br from-orange-900/60 to-teal-900/60" />
+                <div
+                  className="w-full rounded mb-3 border border-white/10 shrink-0"
+                  style={{
+                    aspectRatio: '1/1',
+                    background: `linear-gradient(to bottom right, ${accentColor}40, ${accentColor}80)`
+                  }}
+                />
+                <div className="text-white text-sm font-medium mb-1">Shades</div>
+                <div className="text-white/50 text-xs text-left">Accent color tints</div>
+              </button>
+
+              <button
+                onClick={() => setThemeMode('contrast')}
+                className={`p-4 rounded-lg border-2 transition-all h-full flex flex-col ${themeMode === 'contrast'
+                  ? 'border-white/30 bg-white/10'
+                  : 'border-white/10 hover:border-white/20 bg-black/20'
+                  }`}
+              >
+                <div
+                  className="w-full rounded mb-3 border border-white/10 shrink-0"
+                  style={{
+                    aspectRatio: '1/1',
+                    background: `linear-gradient(to bottom right, ${accentColor}, ${getComplementaryColor(accentColor)})`
+                  }}
+                />
                 <div className="text-white text-sm font-medium mb-1">Contrast</div>
-                <div className="text-white/50 text-xs">Complementary colors</div>
+                <div className="text-white/50 text-xs text-left">Complementary colors</div>
               </button>
             </div>
           </div>
@@ -226,12 +241,18 @@ export function Settings() {
           <div className="bg-black/20 rounded-xl p-6 border border-white/5">
             <h3 className="text-lg text-white mb-4">Theme</h3>
             <div className="grid grid-cols-2 gap-4">
-              <button className="p-4 rounded-lg bg-gray-900/50 border-2 border-white/20 hover:border-white/40 transition-all">
-                <div className="w-full h-20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded mb-3" />
+              <button className="p-4 rounded-lg bg-gray-900/50 border-2 border-white/20 hover:border-white/40 transition-all text-left group flex flex-col h-full">
+                <div
+                  className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded mb-3 shrink-0"
+                  style={{ aspectRatio: '16/9' }}
+                />
                 <span className="text-white text-sm">Dark</span>
               </button>
-              <button className="p-4 rounded-lg bg-black/20 border border-white/10 hover:border-white/20 transition-all opacity-50 cursor-not-allowed">
-                <div className="w-full h-20 bg-gradient-to-br from-gray-100 to-gray-300 rounded mb-3" />
+              <button className="p-4 rounded-lg bg-black/20 border border-white/10 hover:border-white/20 transition-all opacity-50 cursor-not-allowed text-left flex flex-col h-full">
+                <div
+                  className="w-full bg-gradient-to-br from-gray-100 to-gray-300 rounded mb-3 shrink-0"
+                  style={{ aspectRatio: '16/9' }}
+                />
                 <span className="text-white/60 text-sm">Light (Coming Soon)</span>
               </button>
             </div>
@@ -357,7 +378,7 @@ export function Settings() {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-white/60">Version</span>
-                <span className="text-white">0.6.0</span>
+                <span className="text-white">{pkg.version}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-white/60">Build</span>

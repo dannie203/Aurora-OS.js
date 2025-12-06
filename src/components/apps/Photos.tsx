@@ -1,4 +1,5 @@
 import { AppTemplate } from './AppTemplate';
+import { ResponsiveGrid } from '../ui/ResponsiveGrid';
 import { Heart, Folder, Clock, MapPin, User, Image, Grid3x3, List } from 'lucide-react';
 import { useAppStorage } from '../../hooks/useAppStorage';
 
@@ -53,15 +54,15 @@ export function Photos() {
 
   const content = (
     <div className="p-4">
-      <div className="grid grid-cols-4 gap-3">
+      <ResponsiveGrid minItemWidth={140} gap={3}>
         {mockPhotos.map((photo) => (
           <div
             key={photo.id}
             className={`aspect-square ${photo.color} rounded-lg hover:scale-105 transition-transform cursor-pointer`}
           />
         ))}
-      </div>
-    </div>
+      </ResponsiveGrid>
+    </div >
   );
 
   return (

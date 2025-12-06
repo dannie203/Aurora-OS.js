@@ -21,12 +21,16 @@ import {
 import { useAppContext } from './AppContext';
 import { lightenColor } from '../utils/colors';
 import { AppTemplate } from './apps/AppTemplate';
+import { ResponsiveGrid } from './ui/ResponsiveGrid';
 import { useFileSystem, FileNode } from './FileSystemContext';
 import { useAppStorage } from '../hooks/useAppStorage';
+import { useElementSize } from '../hooks/useElementSize';
 
 export function FileManager({ initialPath }: { initialPath?: string }) {
   const { accentColor } = useAppContext();
   const { listDirectory, homePath } = useFileSystem();
+  const [containerRef, { width }] = useElementSize();
+  const isMobile = width < 450;
 
   // Persisted state (viewMode survives refresh)
   const [appState, setAppState] = useAppStorage('finder', {
@@ -225,14 +229,14 @@ export function FileManager({ initialPath }: { initialPath?: string }) {
   );
 
   const content = (
-    <div className="flex-1 overflow-auto p-6">
+    <div ref={containerRef} className="flex-1 overflow-auto p-6">
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full text-white/40">
           <FolderOpen className="w-16 h-16 mb-4" />
           <p>This folder is empty</p>
         </div>
       ) : appState.viewMode === 'grid' ? (
-        <div className="grid grid-cols-6 gap-6">
+        <ResponsiveGrid minItemWidth={110} className="gap-6">
           {items.map((item) => (
             <button
               key={item.name}
@@ -260,7 +264,7 @@ export function FileManager({ initialPath }: { initialPath?: string }) {
               </div>
             </button>
           ))}
-        </div>
+        </ResponsiveGrid>
       ) : (
         <div className="flex flex-col gap-1">
           {items.map((item) => (
@@ -271,23 +275,23 @@ export function FileManager({ initialPath }: { initialPath?: string }) {
               className={`flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors ${selectedItem === item.name ? 'bg-white/10' : ''
                 }`}
             >
-              <div className="w-8 h-8 flex items-center justify-center">
+              <div className="w-8 h-8 flex items-center justify-center shrink-0">
                 {item.type === 'directory' ? (
                   <FolderOpen className="w-5 h-5" style={{ color: accentColor }} />
                 ) : (
                   getFileIcon(item)
                 )}
               </div>
-              <div className="flex-1 text-left">
-                <div className="text-sm text-white/90">{item.name}</div>
+              <div className="flex-1 text-left min-w-0">
+                <div className="text-sm text-white/90 truncate">{item.name}</div>
               </div>
-              <div className="text-xs text-white/40">
+              <div className="text-xs text-white/40 shrink-0">
                 {item.type === 'directory'
                   ? `${item.children?.length || 0} items`
                   : item.size ? `${item.size} bytes` : ''}
               </div>
-              {item.permissions && (
-                <div className="text-xs text-white/30 font-mono">
+              {item.permissions && !isMobile && (
+                <div className="text-xs text-white/50 font-mono shrink-0 whitespace-nowrap text-right min-w-[90px]">
                   {item.permissions}
                 </div>
               )}

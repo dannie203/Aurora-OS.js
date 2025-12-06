@@ -201,9 +201,9 @@ function OS() {
     });
   }, []);
 
-  const updateWindowPosition = useCallback((id: string, position: { x: number; y: number }) => {
+  const updateWindowState = useCallback((id: string, updates: Partial<WindowState>) => {
     setWindows(prevWindows => prevWindows.map(w =>
-      w.id === id ? { ...w, position } : w
+      w.id === id ? { ...w, ...updates } : w
     ));
   }, []);
 
@@ -270,7 +270,7 @@ function OS() {
           onMinimize={() => minimizeWindow(window.id)}
           onMaximize={() => maximizeWindow(window.id)}
           onFocus={() => focusWindow(window.id)}
-          onUpdatePosition={(pos) => updateWindowPosition(window.id, pos)}
+          onUpdateState={(updates) => updateWindowState(window.id, updates)}
           isFocused={window.id === focusedWindowId}
         />
       ))}

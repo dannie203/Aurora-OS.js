@@ -1,4 +1,4 @@
-# Aurora OS.js [![Version](https://img.shields.io/badge/version-v0.6.1-blue)](https://github.com/mental-os/Aurora-OS.js) [![Dependabot Updates](https://github.com/mental-os/Aurora-OS.js/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/dependabot/dependabot-updates) [![Build](https://github.com/mental-os/Aurora-OS.js/actions/workflows/ci.yml/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/ci.yml)
+# Aurora OS.js [![Version](https://img.shields.io/badge/version-v0.6.1-blue)](https://github.com/mental-os/Aurora-OS.js) [![Deploy Web OS](https://github.com/mental-os/Aurora-OS.js/actions/workflows/deploy.yml/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/deploy.yml) [![Dependabot](https://github.com/mental-os/Aurora-OS.js/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/dependabot/dependabot-updates) [![Build](https://github.com/mental-os/Aurora-OS.js/actions/workflows/ci.yml/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/ci.yml)
 
 A modern, web-based desktop operating system interface built with React, Tailwind CSS, and Radix UI.
 
@@ -9,12 +9,9 @@ A modern, web-based desktop operating system interface built with React, Tailwin
 - **Virtual Filesystem**: Linux-inspired filesystem (`/bin`, `/etc`, `/home`, etc.) with persistence.
 - **App Ecosystem**:
   - **Finder**: File system navigation and management.
-  - **Terminal**: Linux-style command line with `ls`, `cd`, `pwd`, `cat`, `mkdir`, `rm`, and more.
+  - **Terminal**: Linux-style command line with `ls`, `cd`, `pwd`, `cat`, `mkdir`, `rm`, and launching apps from CLI.
   - **Settings**: System configuration (Appearance, Accent Colors, Blur effects, Performance).
-  - **Music**: Interactive music player with library and controls.
-  - **Messages**: Chat interface.
-  - **Photos**: Photo gallery.
-  - **Browser**: Web browser interface.
+  - **Music, Messages, Photos**: Interactive media and communication apps.
 - **Persistence**:
   - **Settings**: Colors, themes, and performance preferences saved across sessions.
   - **Filesystem**: All files and directories persist to localStorage.
@@ -22,7 +19,7 @@ A modern, web-based desktop operating system interface built with React, Tailwin
   - **App State**: Individual apps remember their state (sidebar, volume, etc.).
 - **Customization**:
   - **Dark/Light Mode**: System-wide theme switching.
-  - **Accent Colors**: Dynamic system accent colors.
+  - **Accent Colors**: Dynamic system accent colors with "2025" palette.
   - **Blur & Transparency**: Toggleable glassmorphism effects.
 
 ## Tech Stack
@@ -59,13 +56,11 @@ npm test
 
 ## Release Notes
 
-### v0.6.1
-- **Desktop Mirroring**: Live synchronization between `~/Desktop` directory and the Desktop UI.
-- **Terminal App Launch**: Launch apps (Finder, Browser, etc.) via Terminal with argument support (`Finder /home`).
-- **Terminal Enhancements**: Fixed path resolution (`mkdir`, `touch`), added Tab autocomplete, and PATH scanning.
-- **Settings**: Added "Danger Zone" with Soft Reset and Hard Reset options.
-
-
+## v0.6.2
+- **Settings Grid Layouts**: Standardized grids in Appearance, Theme Mode, and Theme sections with fixed aspect ratios (1:1 and 16:9) for consistent responsive design.
+- **Theme Enhancements**: Implemented dynamic gradients for Theme Mode cards (Neutral/Contrast) and introduced a diverse "2025" Color Palette.
+- **Dynamic Versioning**: "About" tab now displays the live application version from package.json.
+- **Default Preferences**: Updated default accent color to Indigo (#5755e4) and fixed compatibility with HTML color inputs.
 
 [View full version history](HISTORY.md)
 

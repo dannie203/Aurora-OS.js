@@ -38,7 +38,7 @@ function loadSettings(): StoredSettings {
   }
   // Default settings
   return {
-    accentColor: '#3b82f6',
+    accentColor: '#5755e4',
     themeMode: 'neutral',
     blurEnabled: true,
     reduceMotion: false,
