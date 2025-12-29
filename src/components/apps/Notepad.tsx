@@ -89,7 +89,7 @@ export function Notepad() {
                 const parsed = JSON.parse(saved);
                 return parsed.activeTabId || '1';
             }
-        } catch (e) {
+        } catch {
             return '1';
         }
         return '1';
@@ -143,14 +143,21 @@ export function Notepad() {
     }, [windowContext]); // checkUnsaved is stable, tabsRef is stable.
 
     // -- Window Data Interception (File Opening) --
+    const tabsRefForOpening = useRef(tabs);
+    useEffect(() => { tabsRefForOpening.current = tabs; }, [tabs]);
+
     useEffect(() => {
         if (windowContext?.data?.path) {
             const path = windowContext.data.path;
 
-            // Check if tab exists
-            const existingTab = tabs.find(t => t.path === path);
+            // Use ref to avoid closure staleness and dependency on tabs
+            const currentTabs = tabsRefForOpening.current;
+            const existingTab = currentTabs.find(t => t.path === path);
+
             if (existingTab) {
-                setActiveTabId(existingTab.id);
+                // Use setTimeout to avoid synchronous setState during effect execution (cascading render)
+                const tid = existingTab.id;
+                setTimeout(() => setActiveTabId(tid), 0);
             } else {
                 // Open new tab
                 const name = path.split('/').pop() || 'Untitled';
@@ -171,13 +178,15 @@ export function Notepad() {
                 };
 
                 // If the only tab was the initial blank "Untitled 1" and it was empty/unmodified, replace it?
-                setTabs(prev => {
-                    if (prev.length === 1 && !prev[0].path && !prev[0].isModified && prev[0].content === '') {
-                        return [newTab];
-                    }
-                    return [...prev, newTab];
-                });
-                setActiveTabId(newId);
+                setTimeout(() => {
+                    setTabs(prev => {
+                        if (prev.length === 1 && !prev[0].path && !prev[0].isModified && prev[0].content === '') {
+                            return [newTab];
+                        }
+                        return [...prev, newTab];
+                    });
+                    setActiveTabId(newId);
+                }, 0);
             }
         }
     }, [windowContext?.data, readFile]);
@@ -508,15 +517,15 @@ export function Notepad() {
                                 <ReactMarkdown
                                     remarkPlugins={[remarkGfm]}
                                     components={{
-                                        h1: ({ node, ...props }) => <h1 className="text-3xl font-bold mb-4 border-b border-white/20 pb-2" style={{ color: accentColor }} {...props} />,
-                                        h2: ({ node, ...props }) => <h2 className="text-2xl font-bold mb-3 border-b border-white/10 pb-1" style={{ color: accentColor }} {...props} />,
-                                        h3: ({ node, ...props }) => <h3 className="text-xl font-bold mb-2" style={{ color: accentColor }} {...props} />,
-                                        p: ({ node, ...props }) => <p className="mb-4 text-white/90 leading-relaxed" {...props} />,
-                                        ul: ({ node, ...props }) => <ul className="list-disc pl-6 mb-4 space-y-1" {...props} />,
-                                        ol: ({ node, ...props }) => <ol className="list-decimal pl-6 mb-4 space-y-1" {...props} />,
-                                        li: ({ node, ...props }) => <li className="text-white/90" {...props} />,
-                                        blockquote: ({ node, ...props }) => <blockquote className="border-l-4 pl-4 italic my-4 text-white/70" style={{ borderColor: accentColor }} {...props} />,
-                                        code: ({ node, className, children, ...props }) => {
+                                        h1: ({ node: _node, ...props }) => <h1 className="text-3xl font-bold mb-4 border-b border-white/20 pb-2" style={{ color: accentColor }} {...props} />,
+                                        h2: ({ node: _node, ...props }) => <h2 className="text-2xl font-bold mb-3 border-b border-white/10 pb-1" style={{ color: accentColor }} {...props} />,
+                                        h3: ({ node: _node, ...props }) => <h3 className="text-xl font-bold mb-2" style={{ color: accentColor }} {...props} />,
+                                        p: ({ node: _node, ...props }) => <p className="mb-4 text-white/90 leading-relaxed" {...props} />,
+                                        ul: ({ node: _node, ...props }) => <ul className="list-disc pl-6 mb-4 space-y-1" {...props} />,
+                                        ol: ({ node: _node, ...props }) => <ol className="list-decimal pl-6 mb-4 space-y-1" {...props} />,
+                                        li: ({ node: _node, ...props }) => <li className="text-white/90" {...props} />,
+                                        blockquote: ({ node: _node, ...props }) => <blockquote className="border-l-4 pl-4 italic my-4 text-white/70" style={{ borderColor: accentColor }} {...props} />,
+                                        code: ({ node: _node, className, children, ...props }) => {
                                             const match = /language-(\w+)/.exec(className || '')
                                             return match ? (
                                                 <div className="rounded-md overflow-hidden my-4 border border-white/10 bg-black/30">
@@ -538,7 +547,7 @@ export function Notepad() {
                                                 </code>
                                             )
                                         },
-                                        a: ({ node, ...props }) => <a className="text-blue-400 hover:underline" style={{ color: accentColor }} {...props} />,
+                                        a: ({ node: _node, ...props }) => <a className="text-blue-400 hover:underline" style={{ color: accentColor }} {...props} />,
                                     }}
                                 >
                                     {activeTab.content}

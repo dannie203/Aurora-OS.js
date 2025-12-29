@@ -1,4 +1,4 @@
-# Aurora OS.js [![Version](https://img.shields.io/badge/Version-v0.7.3--audioPatch-blue)](https://github.com/mental-os/Aurora-OS.js) [![GitHub Pages](https://github.com/mental-os/Aurora-OS.js/actions/workflows/deploy.yml/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/deploy.yml) [![Dependabot](https://github.com/mental-os/Aurora-OS.js/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/dependabot/dependabot-updates) [![Build](https://github.com/mental-os/Aurora-OS.js/actions/workflows/ci.yml/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/ci.yml)
+# Aurora OS.js [![Version](https://img.shields.io/badge/Version-v0.7.3--textPatch-blue)](https://github.com/mental-os/Aurora-OS.js) [![GitHub Pages](https://github.com/mental-os/Aurora-OS.js/actions/workflows/deploy.yml/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/deploy.yml) [![Dependabot](https://github.com/mental-os/Aurora-OS.js/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/dependabot/dependabot-updates) [![Build](https://github.com/mental-os/Aurora-OS.js/actions/workflows/ci.yml/badge.svg)](https://github.com/mental-os/Aurora-OS.js/actions/workflows/ci.yml)
 
 A modern, web-based desktop operating system interface built with React, Tailwind CSS, and Radix UI.
 
@@ -59,28 +59,23 @@ npm test
 ```
 
 ## Release Notes
-
-### v0.7.3-audioPatch
-- **Audio Persistence Patch**:
-    - **Zombie Track Protection**: Fixed an issue where "ghost" tracks would persist after a hard reset.
-    - **Session Recovery**: The Music app now correctly remembers the active tab across browser refreshes but clears it on logout (similar to Finder).
-    - **Storage Standardization**: Migrated Music app storage to use standardized `aurora-os-app-` prefixes for reliable wiping.
-- **Boot Generation Engine**:
-    - **Dynamic Parsing**: The boot sequence now analyzes `package.json` in real-time to generate authentic log entries based on your actual dependencies (`react`, `framer-motion`, etc.).
-    - **Hardware Probing**: Integrated `hardware.ts` to safe-probe the host machine, displaying real CPU core counts, RAM, and specific GPU models (e.g., "Apple M1", "NVIDIA RTX") in the logs.
-    - **Variable Speed**: Implemented non-linear log scrolling logic to simulate realistic processing delays and network bursts.
-- **System Integrity**:
-    - **Secure Boot**: Integrated `integrity.ts` into the startup flow to verify the "Distributor" identity against the signed codebase.
-    - **Visual Feedback**: Boot logs now strictly adhere to the "Mental OS" palette (Cyan `SECURE` / Pink `WARNING`) instead of generic rainbow colors.
-    - **Identity**: Added support for a custom `"nickname"` field in `package.json` to display hacker aliases in the boot logs.
-- **Documentation**:
-    - **Definitive Reference**: Completely rewrote `CODEBASE_DOCUMENTATION.md` into a file-by-file technical manual.
-    - **Restoration**: Restored detailed TypeScript interfaces and function signatures for all utilities, hooks, and services.
-- **Architecture**:
-    - **Lazy Loading**: The core `OS` component is now lazily loaded to prioritize the Boot Sequence performance.
-    - **Robustness**: Implemented defensive error boundaries and type-safety fixes for the hardware probing logic.
+ 
+### v0.7.3-textPatch
+- **The New Notepad Pro**:
+    - **Multi-Tab Interface**: A productive, tabbed editing environment with unique session persistence per user.
+    - **Dual-Mode Editing**: Seamless support for both Plain Text (`.txt`) and Markdown (`.md`) with a live, high-performance Preview mode.
+    - **Premium Aesthetics**: Featuring accent-themed syntax highlighting, glassmorphism toolbar, and custom-styled Markdown rendering (headings, code blocks, blockquotes).
+    - **Deep OS Integration**: Direct file association with Finder/Desktop, integrated `FilePicker` with permission enforcement, and unsaved changes interception system.
+    - **Auto-Save & Persistence**: Debounced state synchronization to `localStorage`, ensuring tabs are preserved across refreshes but securely cleared on Log Off.
+ - **Dependabot Integration**:
+     - **Security & Stability**: Merged and verified updates for `jsdom`, `lucide-react`, `react-hook-form`, `@types/node`, and `typescript-eslint`.
+     - **Strict Lint Compliance**: Refactored the codebase to satisfy new ESLint rules, resolving high-impact warnings like `cascading renders` and `impure functions`.
+ - **Technical Fixes**:
+     - **Cascading Render Fix**: Implemented a robust `useRef` + `setTimeout` strategy for the `useEffect` hooks in Notepad to prevent performance-degrading synchronous state updates.
+     - **Logic Restoration**: Repaired accidental file corruption in `Notepad.tsx`, restoring all critical imports and state management logic.
 
 [View to-do list](TO-DO.md)
+
 [View full version history](HISTORY.md)
 
 # License & Others

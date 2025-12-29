@@ -1,3 +1,18 @@
+## v0.7.3-textPatch
+- **The New Notepad Pro**:
+    - **Multi-Tab Interface**: Productive tabbed layout with per-user session persistence.
+    - **Dual-Mode Editing**: Support for `.txt` and `.md` with live Preview mode.
+    - **Premium UI**: Accent-themed syntax highlighting, glassmorphism toolbar, and custom Markdown rendering.
+    - **Deep OS Integration**: Associated with Finder/Desktop, custom `FilePicker` integration, and `beforeClose` interception for unsaved changes.
+    - **Performance**: Debounced auto-save and zero-delay context switching.
+- **Dependabot Integration**:
+    - **Security & Stability**: Merged updates for `jsdom`, `lucide-react`, `react-hook-form`, `@types/node`, and `typescript-eslint`.
+    - **Strict Lint Compliance**: Refactored codebase to resolve `cascading renders` and `impure functions` warnings.
+- **Maintenance**:
+    - **Cascading Render Fix**: Implemented `useRef` + `setTimeout` for effect-driven state updates in `Notepad.tsx`.
+    - **Logic Restoration**: Recovered `Notepad.tsx` from corruption and optimized imports/destructuring.
+    - **Cleanup**: Achieved 0 lint errors/warnings across all modified files.
+
 ## v0.7.3-audioPatch
 - **Boot Generation Engine**:
     - **Dynamic Parsing**: The boot sequence now analyzes `package.json` in real-time to generate authentic log entries based on your actual dependencies (`react`, `framer-motion`, etc.).
