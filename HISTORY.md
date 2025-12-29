@@ -1,3 +1,6 @@
+## v0.7.3
+
+
 ## v0.7.2-patch4
 - **Project Integrity System**:
     - **Identity Validation**: Implemented strict runtime checks that verify the project's identity (`package.json`) against hardcoded cryptographic constants.
