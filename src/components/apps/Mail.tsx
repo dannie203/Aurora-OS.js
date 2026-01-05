@@ -142,10 +142,32 @@ Happy reading! 📚`,
 export function Mail({ owner }: { owner?: string }) {
   const { t } = useI18n();
   const [activeMailbox, setActiveMailbox] = useSessionStorage('mail-active-mailbox', 'inbox', owner);
-  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(mockEmails[0].id);
+  const [storedEmails, setStoredEmails] = useSessionStorage<Email[]>('mail-emails', mockEmails, owner);
+  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(storedEmails[0]?.id || null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [emails, setEmails] = useState<Email[]>(mockEmails);
   const { accentColor } = useAppContext();
+
+  // Ensure timestamps are Date objects (they become strings when stored in localStorage)
+  const emails = useMemo(() => {
+    return storedEmails.map(email => ({
+      ...email,
+      timestamp: email.timestamp instanceof Date ? email.timestamp : new Date(email.timestamp),
+    }));
+  }, [storedEmails]);
+
+  const setEmails = (value: Email[] | ((prev: Email[]) => Email[])) => {
+    if (typeof value === 'function') {
+      setStoredEmails(prev => {
+        const normalizedPrev = prev.map(email => ({
+          ...email,
+          timestamp: email.timestamp instanceof Date ? email.timestamp : new Date(email.timestamp),
+        }));
+        return value(normalizedPrev);
+      });
+    } else {
+      setStoredEmails(value);
+    }
+  };
 
   const mailSidebar = {
     sections: [
@@ -191,7 +213,7 @@ export function Mail({ owner }: { owner?: string }) {
     return filtered.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }, [emails, activeMailbox, searchQuery]);
 
-  const selectedEmail = selectedEmailId ? emails.find(e => e.id === selectedEmailId) : null;
+  const selectedEmail = selectedEmailId ? filteredEmails.find(e => e.id === selectedEmailId) : null;
 
   const unreadCount = emails.filter(e => !e.read && !e.deleted && !e.archived).length;
   const updatedSidebar = {
