@@ -1235,3 +1235,17 @@ export function Calendar({ owner }: CalendarProps) {
     </div>
   );
 }
+
+import { AppMenuConfig } from '../../types';
+
+export const calendarMenuConfig: AppMenuConfig = {
+    menus: ['File', 'Edit', 'View', 'Window', 'Help'],
+    items: {
+        'View': [
+            { label: 'Day', labelKey: 'calendar.menu.day', shortcut: '⌘1', action: 'view-day' },
+            { label: 'Week', labelKey: 'calendar.menu.week', shortcut: '⌘2', action: 'view-week' },
+            { label: 'Month', labelKey: 'calendar.menu.month', shortcut: '⌘3', action: 'view-month' },
+            { label: 'Year', labelKey: 'calendar.menu.year', shortcut: '⌘4', action: 'view-year' }
+        ]
+    }
+};

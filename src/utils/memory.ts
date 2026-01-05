@@ -17,6 +17,8 @@ export const STORAGE_KEYS = {
     SESSION_PREFIX: 'aurora-session-', // Ephemeral session state (last paths, etc)
     SYSTEM_CONFIG: 'aurora-system-config', // Global system settings (Dev Mode, etc)
     LANGUAGE: 'aurora-system-language', // System Language
+    TERMINAL_HISTORY: 'aurora-terminal-history-', // Command output history prefix
+    TERMINAL_INPUT: 'aurora-terminal-input-', // Command input history prefix
 
     // Hard memory keys (core data, dangerous to forget)
     FILESYSTEM: 'aurora-filesystem',
@@ -37,7 +39,9 @@ const MEMORY_CONFIG = {
             STORAGE_KEYS.SETTINGS,
             STORAGE_KEYS.APP_PREFIX,
             STORAGE_KEYS.WINDOWS_PREFIX,
-            STORAGE_KEYS.SESSION_PREFIX
+            STORAGE_KEYS.SESSION_PREFIX,
+            STORAGE_KEYS.TERMINAL_HISTORY,
+            STORAGE_KEYS.TERMINAL_INPUT
         ]
     },
     hard: {
@@ -190,6 +194,11 @@ export function clearSession(username: string): void {
     }
 
     keysToRemove.forEach(k => localStorage.removeItem(k));
-    console.log(`Cleared session for user: ${username} (${keysToRemove.length + 1} keys)`);
+
+    // 3. Clear Terminal History for this user
+    localStorage.removeItem(`${STORAGE_KEYS.TERMINAL_HISTORY}${username}`);
+    localStorage.removeItem(`${STORAGE_KEYS.TERMINAL_INPUT}${username}`);
+
+    console.log(`Cleared session for user: ${username} (${keysToRemove.length + 3} keys)`);
 }
 

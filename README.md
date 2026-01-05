@@ -85,25 +85,21 @@ npm run dev
 
 Or use the [GitHub Pages](https://mental-os.github.io/Aurora-OS.js) (LIVE DEMO)
 
-## Release Notes (v0.8.0)
+## Release Notes (v0.8.1)
 
 ### Added
 
-- **Onboarding Wizard**: A new "First Run Experience" (OOBE) that guides users through Language selection, Admin Account creation, and personalization.
-- **User Management**: "Users & Groups" settings now support creating, deleting, and editing users (including Admin role toggle).
-- **Admin Privileges**: Strict permission model where only `root` or `admin` group members can manage users.
-- **Localization (i18n)**: Added foundational support for multi-language interfaces (i18next), starting with English, Spanish, and French.
-- **App Store**: Added install feedback with progress bar dependant of app size and (future) installed hardware.
+- **Mail App**: Added mail app with basic functionality, to be further enhanced by gameplay logic and features in 0.9.x (just like Messages app should be enhanced by gameplay logic and features in 0.9.x).
 
 ### Improved
 
-- **Storage Architecture**: Standardized system language persistence using `STORAGE_KEYS.LANGUAGE` (survives soft resets).
-- **Build Optimization**: Configured Electron to only bundle necessary locales (`en`) to reduce package size.
-- **Boot Sequence**: Fixed duplicate boot glitch and cleaned up the initial boot flow.
-- **Ghost Directories**: Resolved the issue where `/home/user` was incorrectly created even when that user didn't exist.
-- **Security**: `addUserToGroup` now correctly syncs between user objects and group lists.
-- **Terminal**: Command history and visible output are now preserved while the user is still logged in (saves in case of crash).
-- **Apps**: Apps now show size.
+- **Apps Main Menu**: Standardized to be included in [app].tsx files.
+- **System States**: Improved the restart/log-out/shutdown logic.
+- **Apps**: Added user context to apps, so they can access user-specific data (eg. user specific home directory, user specific downloads directory, etc.)
+
+### Fixed
+
+- **Terminal App**: Fixed issue with terminal app retaining history even after a hard wipe - it should persist only in case of a crash.
 
 ### [View full version history](HISTORY.md)
 
