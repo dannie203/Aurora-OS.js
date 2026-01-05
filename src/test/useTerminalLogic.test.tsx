@@ -182,7 +182,7 @@ describe('useTerminalLogic', () => {
         // We look for 'aurora_terminal_history' key
         await waitFor(() => {
              expect(localStorage.setItem).toHaveBeenCalledWith(
-                 'aurora_terminal_history', 
+                 'aurora-terminal-history-user', 
                  expect.stringContaining('persistence_test')
              );
         });

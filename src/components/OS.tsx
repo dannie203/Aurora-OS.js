@@ -25,6 +25,7 @@ import { STORAGE_KEYS } from '../utils/memory';
 import { useWindowManager } from '../hooks/useWindowManager';
 import { useI18n } from '../i18n/index';
 
+import {Mail} from "@/components/apps/Mail.tsx";
 // Load icon positions (supports both pixel and grid formats with migration)
 function loadIconPositions(): Record<string, GridPosition> {
     try {
@@ -192,6 +193,10 @@ export default function OS() {
             case 'messages':
                 title = t('apps.messages');
                 content = <Messages owner={owner} />;
+                break;
+            case 'mail':
+                title = 'Mail';
+                content = <Mail owner={owner} />;
                 break;
             case 'browser':
                 title = t('apps.browser');

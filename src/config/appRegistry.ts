@@ -9,10 +9,11 @@ import { Browser, browserMenuConfig } from '../components/apps/Browser';
 import { Terminal as TerminalApp, terminalMenuConfig } from '../components/apps/Terminal';
 import { DevCenter, devCenterMenuConfig } from '../components/apps/DevCenter';
 import { Notepad, notepadMenuConfig } from '../components/apps/Notepad';
-import { PlaceholderApp } from '../components/apps/PlaceholderApp';
-import { Calendar as CalendarApp } from '../components/apps/Calendar';
+
+import { Calendar as CalendarApp, calendarMenuConfig } from '../components/apps/Calendar';
 import { AppStore as AppStoreComponent, appStoreMenuConfig } from '../components/apps/AppStore';
-import { mailMenuConfig, calendarMenuConfig } from './appMenuConfigs';
+import { Mail as MailApp, mailMenuConfig } from '../components/apps/Mail';
+
 
 import { AppMenuConfig } from '../types';
 
@@ -79,7 +80,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         iconSolid: '#38bdf8',
         category: 'productivity',
         isCore: true,
-        component: PlaceholderApp,
+        component: MailApp,
         dockOrder: 3,
         menu: mailMenuConfig,
         size: 85,

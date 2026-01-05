@@ -6,6 +6,7 @@
 - **User Management**: "Users & Groups" settings now support creating, deleting, and editing users (including Admin role toggle).
 - **Admin Privileges**: Strict permission model where only `root` or `admin` group members can manage users.
 - **Localization (i18n)**: Added foundational support for multi-language interfaces (i18next), starting with English, Spanish, and French.
+- **App Store**: Added install feedback with progress bar dependant of app size and (future) installed hardware.
 
 ### Improved
 
@@ -15,6 +16,7 @@
 - **Ghost Directories**: Resolved the issue where `/home/user` was incorrectly created even when that user didn't exist.
 - **Security**: `addUserToGroup` now correctly syncs between user objects and group lists.
 - **Terminal**: Command history and visible output are now preserved while the user is still logged in (saves in case of crash).
+- **Apps**: Apps now show size.
 
 ## v0.7.9
 
