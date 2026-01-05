@@ -31,6 +31,7 @@ export interface AppMetadata {
     component: ComponentType<any>;
     dockOrder?: number;          // Order in dock (lower = earlier)
     menu?: AppMenuConfig;        // App-specific menu configuration
+    size?: number;               // Size in MB (approximate/simulated)
 }
 
 // Centralized App Registry
@@ -50,6 +51,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: FileManager,
         dockOrder: 1,
         menu: finderMenuConfig,
+        size: 25,
     },
     browser: {
         id: 'browser',
@@ -65,6 +67,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: Browser,
         dockOrder: 2,
         menu: browserMenuConfig,
+        size: 150,
     },
     mail: {
         id: 'mail',
@@ -80,6 +83,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: MailApp,
         dockOrder: 3,
         menu: mailMenuConfig,
+        size: 85,
     },
     appstore: {
         id: 'appstore',
@@ -95,6 +99,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: AppStoreComponent,
         dockOrder: 4,
         menu: appStoreMenuConfig,
+        size: 40,
     },
     terminal: {
         id: 'terminal',
@@ -110,6 +115,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: TerminalApp,
         dockOrder: 9,
         menu: terminalMenuConfig,
+        size: 12,
     },
     settings: {
         id: 'settings',
@@ -125,6 +131,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: SettingsApp,
         dockOrder: 10,
         menu: settingsMenuConfig,
+        size: 60,
     },
 
     // Optional Apps (can be installed/uninstalled)
@@ -142,6 +149,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: Notepad,
         dockOrder: 4,
         menu: notepadMenuConfig,
+        size: 5,
     },
     messages: {
         id: 'messages',
@@ -157,6 +165,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: Messages,
         dockOrder: 5,
         menu: messagesMenuConfig,
+        size: 45,
     },
     calendar: {
         id: 'calendar',
@@ -172,6 +181,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: CalendarApp,
         dockOrder: 6,
         menu: calendarMenuConfig,
+        size: 20,
     },
     photos: {
         id: 'photos',
@@ -187,6 +197,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: Photos,
         dockOrder: 7,
         menu: photosMenuConfig,
+        size: 240,
     },
     music: {
         id: 'music',
@@ -202,6 +213,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: MusicApp,
         dockOrder: 8,
         menu: musicMenuConfig,
+        size: 180,
     },
 
     'dev-center': {
@@ -218,6 +230,7 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
         component: DevCenter,
         dockOrder: 12,
         menu: devCenterMenuConfig,
+        size: 350,
     },
 };
 
