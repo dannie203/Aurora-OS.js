@@ -4,7 +4,9 @@ import { checkPermissions } from '../../../utils/fileSystemUtils';
 export const cp: TerminalCommand = {
     name: 'cp',
     description: 'Copy files',
+    descriptionKey: 'terminal.commands.cp.description',
     usage: 'cp <source> <dest>',
+    usageKey: 'terminal.commands.cp.usage',
     execute: (context) => {
         const { args, fileSystem, resolvePath, terminalUser } = context;
         const { readFile, createFile, getNodeAtPath, users, currentUser } = fileSystem;

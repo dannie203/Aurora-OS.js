@@ -1,6 +1,6 @@
 {
       "name": "aurora-os-js",
-      "version": "0.7.9",
+      "version": "0.8.0",
       "private": true,
       "type": "module",
       "author": "Cătălin-Robert Drăgoiu",
@@ -158,7 +158,10 @@
                   "icon": "public/vite.svg",
                   "hardenedRuntime": true,
                   "gatekeeperAssess": false
-            }
+            },
+            "electronLanguages": [
+                  "en"
+            ]
       },
       "overrides": {
             "react-day-picker": {

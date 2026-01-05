@@ -4,7 +4,9 @@ import { checkPermissions } from '../../../utils/fileSystemUtils';
 export const touch: TerminalCommand = {
     name: 'touch',
     description: 'Create file or update timestamp',
+    descriptionKey: 'terminal.commands.touch.description',
     usage: 'touch <name>',
+    usageKey: 'terminal.commands.touch.usage',
     execute: (context) => {
         const { args, fileSystem, resolvePath, terminalUser } = context;
         if (args.length === 0) {

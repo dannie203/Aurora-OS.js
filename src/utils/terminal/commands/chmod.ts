@@ -3,7 +3,9 @@ import { TerminalCommand } from '../types';
 export const chmod: TerminalCommand = {
     name: 'chmod',
     description: 'Change file modes (permissions)',
+    descriptionKey: 'terminal.commands.chmod.description',
     usage: 'chmod <mode> <file>',
+    usageKey: 'terminal.commands.chmod.usage',
     execute: (context) => {
         const { args, fileSystem, resolvePath, terminalUser } = context;
         if (args.length < 2) {

@@ -4,7 +4,9 @@ import { checkPermissions } from '../../../utils/fileSystemUtils';
 export const cd: TerminalCommand = {
     name: 'cd',
     description: 'Change directory',
+    descriptionKey: 'terminal.commands.cd.description',
     usage: 'cd <path>',
+    usageKey: 'terminal.commands.cd.usage',
     execute: ({ args, fileSystem, resolvePath, setCurrentPath, terminalUser }) => {
         const { getNodeAtPath, users, currentUser, homePath } = fileSystem;
         const activeUser = terminalUser || currentUser || 'user';

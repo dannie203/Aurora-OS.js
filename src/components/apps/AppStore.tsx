@@ -9,6 +9,7 @@ import { cn } from '../ui/utils';
 import { AppIcon } from '../ui/AppIcon';
 import { EmptyState } from '../ui/empty-state';
 import { useAppContext } from '../AppContext';
+import { useI18n } from '../../i18n/index';
 
 interface AppStoreProps {
     owner?: string;
@@ -17,6 +18,7 @@ interface AppStoreProps {
 export function AppStore({ owner }: AppStoreProps) {
     const { installedApps, installApp, uninstallApp } = useFileSystem();
     const { accentColor } = useAppContext();
+    const { t } = useI18n();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<'all' | AppMetadata['category']>('all');
     const [installingApps, setInstallingApps] = useState<Record<string, number>>({});
@@ -27,12 +29,12 @@ export function AppStore({ owner }: AppStoreProps) {
     const progressRef = useRef<Record<string, number>>({});
 
     const categories: Array<{ id: 'all' | AppMetadata['category']; label: string }> = [
-        { id: 'all', label: 'All' },
-        { id: 'productivity', label: 'Productivity' },
-        { id: 'media', label: 'Media' },
-        { id: 'utilities', label: 'Utilities' },
-        { id: 'development', label: 'Development' },
-        { id: 'system', label: 'System' },
+        { id: 'all', label: t('appStore.categories.all') },
+        { id: 'productivity', label: t('appStore.categories.productivity') },
+        { id: 'media', label: t('appStore.categories.media') },
+        { id: 'utilities', label: t('appStore.categories.utilities') },
+        { id: 'development', label: t('appStore.categories.development') },
+        { id: 'system', label: t('appStore.categories.system') },
     ];
 
     // Cleanup timeouts on unmount
@@ -52,13 +54,13 @@ export function AppStore({ owner }: AppStoreProps) {
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
             apps = apps.filter(app =>
-                app.name.toLowerCase().includes(query) ||
-                app.description.toLowerCase().includes(query)
+                (app.nameKey ? t(app.nameKey) : app.name).toLowerCase().includes(query) ||
+                (app.descriptionKey ? t(app.descriptionKey) : app.description).toLowerCase().includes(query)
             );
         }
 
         return apps;
-    }, [searchQuery, selectedCategory]);
+    }, [searchQuery, selectedCategory, t]);
 
     const handleInstall = (appId: string, appSize: number = 50) => {
         // If already installing, ignore
@@ -135,7 +137,7 @@ export function AppStore({ owner }: AppStoreProps) {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                         <Input
                             type="text"
-                            placeholder="Search apps..."
+                            placeholder={t('appStore.searchPlaceholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="pl-10 h-8 bg-white/5 border-white/10 text-white placeholder:text-white/40"
@@ -168,8 +170,8 @@ export function AppStore({ owner }: AppStoreProps) {
                         <div className="h-full flex items-center justify-center">
                             <EmptyState
                                 icon={Search}
-                                title="No apps found"
-                                description="Try adjusting your search or category filter to find what you're looking for."
+                                title={t('appStore.empty.title')}
+                                description={t('appStore.empty.description')}
                             />
                         </div>
                     ) : (
@@ -178,6 +180,8 @@ export function AppStore({ owner }: AppStoreProps) {
                                 const isInstalled = installedApps.has(app.id);
                                 const progress = installingApps[app.id];
                                 const isInstalling = progress !== undefined;
+                                const displayName = app.nameKey ? t(app.nameKey) : app.name;
+                                const displayDescription = app.descriptionKey ? t(app.descriptionKey) : app.description;
 
                                 return (
                                     <div
@@ -188,13 +192,13 @@ export function AppStore({ owner }: AppStoreProps) {
                                         <div className="flex items-start gap-4 mb-3">
                                             <AppIcon app={app} size="lg" />
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-white font-semibold text-lg mb-1">{app.name}</h3>
-                                                <p className="text-white/60 text-xs uppercase tracking-wide">{app.category}</p>
+                                                <h3 className="text-white font-semibold text-lg mb-1">{displayName}</h3>
+                                                <p className="text-white/60 text-xs uppercase tracking-wide">{t(`appStore.categories.${app.category}`)}</p>
                                             </div>
                                         </div>
 
                                         {/* Description */}
-                                        <p className="text-white/70 text-sm line-clamp-2">{app.description}</p>
+                                        <p className="text-white/70 text-sm line-clamp-2">{displayDescription}</p>
                                         
                                         {/* Metadata (Size) */}
                                         <p className="text-white/30 text-[10px] uppercase tracking-wider font-mono mb-4">
@@ -206,7 +210,7 @@ export function AppStore({ owner }: AppStoreProps) {
                                             {app.isCore ? (
                                                 <div className="flex items-center gap-2 text-white/40 text-sm">
                                                     <Check className="w-4 h-4" />
-                                                    <span>System App</span>
+                                                    <span>{t('appStore.systemApp')}</span>
                                                 </div>
                                             ) : isInstalling ? (
                                                 // Progress Bar UI
@@ -231,7 +235,7 @@ export function AppStore({ owner }: AppStoreProps) {
                                                     className="flex items-center gap-2 border-white/20 text-white hover:bg-red-500/20 hover:border-red-500/40"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
-                                                    Uninstall
+                                                    {t('appStore.uninstall')}
                                                 </Button>
                                             ) : (
                                                 <Button
@@ -241,14 +245,14 @@ export function AppStore({ owner }: AppStoreProps) {
                                                     style={{ backgroundColor: accentColor }}
                                                 >
                                                     <Download className="w-4 h-4" />
-                                                    Install
+                                                    {t('appStore.install')}
                                                 </Button>
                                             )}
 
                                             {isInstalled && !app.isCore && !isInstalling && (
                                                 <div className="flex items-center gap-1 text-green-400 text-xs ml-auto">
                                                     <Check className="w-3 h-3" />
-                                                    Installed
+                                                    {t('appStore.installed')}
                                                 </div>
                                             )}
                                         </div>
@@ -270,10 +274,10 @@ export const appStoreMenuConfig: AppMenuConfig = {
     menus: ['File', 'Edit', 'Store', 'Window', 'Help'],
     items: {
         'Store': [
-            { label: 'Reload', shortcut: '⌘R', action: 'reload' },
+            { label: 'Reload', labelKey: 'menubar.items.reload', shortcut: '⌘R', action: 'reload' },
             { type: 'separator' },
-            { label: 'Check for Updates...', action: 'check-updates' },
-            { label: 'View My Account', action: 'view-account' }
+            { label: 'Check for Updates...', labelKey: 'appStore.menu.checkForUpdates', action: 'check-updates' },
+            { label: 'View My Account', labelKey: 'appStore.menu.viewMyAccount', action: 'view-account' }
         ]
     }
 };

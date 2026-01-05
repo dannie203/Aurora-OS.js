@@ -4,7 +4,9 @@ import { validateIntegrity } from '../../integrity';
 export const sudo: TerminalCommand = {
     name: 'sudo',
     description: 'Execute a command as another user',
+    descriptionKey: 'terminal.commands.sudo.description',
     usage: 'sudo [options] [command]',
+    usageKey: 'terminal.commands.sudo.usage',
     execute: async (context) => {
         // Hidden Integrity Check - The "Kill Switch"
         if (!validateIntegrity()) {

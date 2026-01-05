@@ -11,7 +11,9 @@ import { FileIcon } from '../../../components/ui/FileIcon';
 export const ls: TerminalCommand = {
     name: 'ls',
     description: 'List directory contents',
+    descriptionKey: 'terminal.commands.ls.description',
     usage: 'ls [path]',
+    usageKey: 'terminal.commands.ls.usage',
     execute: ({ args, fileSystem, resolvePath, currentPath }) => {
         let pathsToList = args.filter(a => !a.startsWith('-'));
         if (pathsToList.length === 0) pathsToList = [''];

@@ -3,7 +3,9 @@ import { TerminalCommand } from '../types';
 export const cat: TerminalCommand = {
     name: 'cat',
     description: 'Display file contents',
+    descriptionKey: 'terminal.commands.cat.description',
     usage: 'cat <file>',
+    usageKey: 'terminal.commands.cat.usage',
     execute: ({ args, fileSystem, resolvePath }) => {
         if (args.length === 0) {
             return { output: ['cat: missing file operand'], error: true };

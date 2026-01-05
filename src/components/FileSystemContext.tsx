@@ -26,7 +26,7 @@ import { useAuth } from "../hooks/fileSystem/useAuth";
 import { useFileSystemQueries } from "../hooks/fileSystem/useFileSystemQueries";
 import { useFileSystemMutations } from "../hooks/fileSystem/useFileSystemMutations";
 import { notify } from "../services/notifications";
-import { getCoreApps } from "../config/appRegistry";
+import { CORE_APP_IDS } from "../config/appConstants";
 import { STORAGE_KEYS } from "../utils/memory";
 
 export interface FileSystemContextType {
@@ -52,6 +52,12 @@ export interface FileSystemContextType {
     fullName: string,
     password?: string,
     passwordHint?: string,
+    asUser?: string,
+    populateHome?: boolean
+  ) => boolean;
+  updateUser: (
+    username: string,
+    updates: { fullName?: string; password?: string; passwordHint?: string; isAdmin?: boolean },
     asUser?: string
   ) => boolean;
   deleteUser: (username: string, asUser?: string) => boolean;
@@ -80,6 +86,8 @@ export interface FileSystemContextType {
   verifyPassword: (username: string, passwordToTry: string) => boolean;
   groups: Group[];
   addGroup: (groupName: string, members?: string[]) => boolean;
+  addUserToGroup: (username: string, groupName: string) => boolean;
+  removeUserFromGroup: (username: string, groupName: string) => boolean;
   deleteGroup: (groupName: string) => boolean;
   installedApps: Set<string>;
   installApp: (appId: string, asUser?: string) => boolean;
@@ -107,8 +115,11 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
     login,
     logout,
     addUser,
+    updateUser,
     deleteUser,
     addGroup,
+    addUserToGroup,
+    removeUserFromGroup,
     deleteGroup,
     resetAuthState,
     verifyUserPassword,
@@ -155,7 +166,7 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
     }
     // Default to only core apps (mimicking Linux behavior)
     // Optional apps must be installed via App Store
-    return new Set(getCoreApps().map((app) => app.id));
+    return new Set(CORE_APP_IDS);
   });
 
   // Persist installed apps
@@ -258,8 +269,8 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
       }
 
       // Check if app is core (cannot uninstall)
-      const coreAppIds = getCoreApps().map((app) => app.id);
-      if (coreAppIds.includes(appId)) {
+      // Checks against CORE_APP_IDS constant instead of registry
+      if (CORE_APP_IDS.includes(appId as any)) {
         notify.system(
           "error",
           "App Store",
@@ -304,8 +315,7 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
   // 6. Reset Logic (Unified)
   const resetFileSystem = useCallback(() => {
     // Reset installed apps to core apps only
-    const coreAppIds = getCoreApps().map((app) => app.id);
-    setInstalledApps(new Set(coreAppIds));
+    setInstalledApps(new Set(CORE_APP_IDS));
     localStorage.removeItem("aurora-installed-apps");
 
     // Reset filesystem and auth
@@ -390,6 +400,7 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
     createDirectory,
     deleteNode,
     addUser,
+    updateUser,
     deleteUser,
     writeFile,
     readFile,
@@ -407,6 +418,8 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
     verifyPassword: verifyUserPassword,
     groups,
     addGroup,
+    addUserToGroup,
+    removeUserFromGroup,
     deleteGroup,
     installedApps,
     installApp,
@@ -425,6 +438,7 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
     createDirectory,
     deleteNode,
     addUser,
+    updateUser,
     deleteUser,
     writeFile,
     readFile,
@@ -442,6 +456,8 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
     verifyUserPassword,
     groups,
     addGroup,
+    addUserToGroup,
+    removeUserFromGroup,
     deleteGroup,
     installedApps,
     installApp,

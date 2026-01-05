@@ -3,6 +3,7 @@ import { TerminalCommand } from '../types';
 export const exit: TerminalCommand = {
     name: 'exit',
     description: 'Exit the current shell session',
+    descriptionKey: 'terminal.commands.exit.description',
     execute: async ({ closeSession }) => {
         closeSession();
         // If we were in a nested session, this pops it.

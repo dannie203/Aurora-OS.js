@@ -6,6 +6,7 @@ const bootTime = Date.now();
 export const uptime: TerminalCommand = {
     name: 'uptime',
     description: 'Tell how long the system has been running',
+    descriptionKey: 'terminal.commands.uptime.description',
     execute: () => {
         const now = Date.now();
         const uptimeMs = now - bootTime;

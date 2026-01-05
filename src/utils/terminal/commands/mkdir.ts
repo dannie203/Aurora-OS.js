@@ -4,7 +4,9 @@ import { checkPermissions } from '../../../utils/fileSystemUtils';
 export const mkdir: TerminalCommand = {
     name: 'mkdir',
     description: 'Create directory',
+    descriptionKey: 'terminal.commands.mkdir.description',
     usage: 'mkdir <name>',
+    usageKey: 'terminal.commands.mkdir.usage',
     execute: (context) => {
         const { args, fileSystem, resolvePath } = context;
         if (args.length === 0) {

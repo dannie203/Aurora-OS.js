@@ -6,6 +6,7 @@ import { checkPermissions } from '../utils/fileSystemUtils';
 import { getCommand, commands, getAllCommands } from '../utils/terminal/registry';
 import { TerminalCommand } from '../utils/terminal/types';
 import { getColorShades } from '../utils/colors';
+import { useI18n } from '../i18n/index';
 
 export interface CommandHistory {
     id: string;
@@ -87,12 +88,48 @@ const parseCommandInput = (input: string): { command: string; args: string[]; re
 
 export function useTerminalLogic(onLaunchApp?: (appId: string, args: string[], owner?: string) => void, initialUser?: string) {
     const { accentColor } = useAppContext();
-    const [history, setHistory] = useState<CommandHistory[]>([]);
+    const { t } = useI18n();
+    const [history, setHistory] = useState<CommandHistory[]>(() => {
+        try {
+            const saved = localStorage.getItem('aurora_terminal_history');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
     const [input, setInput] = useState('');
-    const [commandHistory, setCommandHistory] = useState<string[]>([]);
+    const [commandHistory, setCommandHistory] = useState<string[]>(() => {
+        try {
+            const saved = localStorage.getItem('aurora_terminal_input_history');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
+
     const [historyIndex, setHistoryIndex] = useState(-1);
     const [ghostText, setGhostText] = useState('');
     const integrityCheckRun = useRef(false);
+
+    // Persistence Effect
+    useEffect(() => {
+        try {
+            // Sanitize history to ensure it's serializable
+            // ReactNodes (objects) cannot be safely stringified in all cases
+            // We'll filter output to strings only for persistence to avoid crashes
+            const safeHistory = history.map(h => ({
+                ...h,
+                output: h.output.map(o => (typeof o === 'string' ? o : (typeof o === 'number' ? String(o) : '[Complex Output]')))
+            }));
+            localStorage.setItem('aurora_terminal_history', JSON.stringify(safeHistory));
+        } catch (e) {
+            console.error('Failed to save terminal history', e);
+        }
+    }, [history]);
+
+    useEffect(() => {
+        localStorage.setItem('aurora_terminal_input_history', JSON.stringify(commandHistory));
+    }, [commandHistory]);
 
     // Session Stack for su/sudo (independent of global desktop session)
     const [sessionStack, setSessionStack] = useState<string[]>([]);
@@ -654,7 +691,8 @@ export function useTerminalLogic(onLaunchApp?: (appId: string, args: string[], o
                                             print: (c) => scriptOutput.push(c),
                                             isSudoAuthorized,
                                             setIsSudoAuthorized,
-                                            verifyPassword
+                                            verifyPassword,
+                                            t
                                         });
 
                                         if (result.output) scriptOutput.push(...result.output);
@@ -709,7 +747,6 @@ export function useTerminalLogic(onLaunchApp?: (appId: string, args: string[], o
                         terminalUser: activeTerminalUser,
                         spawnSession: pushSession,
                         closeSession: closeSession,
-                        onLaunchApp: onLaunchApp,
                         getNodeAtPath: getNodeAtPath,
                         readFile: readFile,
                         prompt: (m, t) => prompt(m, t, historyId),
@@ -728,7 +765,8 @@ export function useTerminalLogic(onLaunchApp?: (appId: string, args: string[], o
                         },
                         isSudoAuthorized: isSudoAuthorized,
                         setIsSudoAuthorized: setIsSudoAuthorized,
-                        verifyPassword: verifyPassword
+                        verifyPassword: verifyPassword,
+                        t // Inject translation function
                     });
 
                     cmdOutput = result.output;

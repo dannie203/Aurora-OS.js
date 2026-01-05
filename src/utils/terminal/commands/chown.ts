@@ -3,7 +3,9 @@ import { TerminalCommand } from '../types';
 export const chown: TerminalCommand = {
     name: 'chown',
     description: 'Change file owner and group',
+    descriptionKey: 'terminal.commands.chown.description',
     usage: 'chown <owner>[:<group>] <file>',
+    usageKey: 'terminal.commands.chown.usage',
     execute: (context) => {
         const { args, fileSystem, resolvePath, terminalUser } = context;
         if (args.length < 2) {

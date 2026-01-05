@@ -3,7 +3,9 @@ import { TerminalCommand } from '../types';
 export const find: TerminalCommand = {
     name: 'find',
     description: 'Search for files in a directory hierarchy',
+    descriptionKey: 'terminal.commands.find.description',
     usage: 'find [path] [-name pattern]',
+    usageKey: 'terminal.commands.find.usage',
     execute: ({ args, fileSystem: { listDirectory, resolvePath }, currentPath }) => {
         let searchPath = currentPath;
         let namePattern = '*';
