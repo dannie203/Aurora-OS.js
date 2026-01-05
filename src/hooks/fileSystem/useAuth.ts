@@ -152,7 +152,13 @@ export function useAuth(
 
   const logout = useCallback(() => {
     setCurrentUser(null);
-    notify.system("success", "Auth", "Logged out");
+    localStorage.removeItem("aurora-current-user");
+
+    // Clear Terminal History on global logout
+    localStorage.removeItem("aurora_terminal_history");
+    localStorage.removeItem("aurora_terminal_input_history");
+    
+    notify.system("success", "System", "Logged out successfully");
   }, []);
 
   const addUser = useCallback(

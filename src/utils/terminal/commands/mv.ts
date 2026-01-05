@@ -4,7 +4,9 @@ import { checkPermissions } from '../../../utils/fileSystemUtils';
 export const mv: TerminalCommand = {
     name: 'mv',
     description: 'Move (rename) files',
+    descriptionKey: 'terminal.commands.mv.description',
     usage: 'mv <source> <dest>',
+    usageKey: 'terminal.commands.mv.usage',
     execute: (context) => {
         const { args, fileSystem, resolvePath, terminalUser } = context;
         if (args.length < 2) {

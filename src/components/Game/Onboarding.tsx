@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, Check, User, Globe, Palette, Loader2 } from "lucide-react";
 import { GameScreenLayout } from "./GameScreenLayout";
@@ -8,6 +8,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { GlassInput } from "../ui/GlassInput";
 import { GlassButton } from "../ui/GlassButton";
 import { cn } from "../ui/utils";
+import { SUPPORTED_LOCALES } from "../../i18n/translations";
+import { useI18n } from "../../i18n/index";
 import { STORAGE_KEYS } from "../../utils/memory";
 
 import { updateStoredVersion } from "../../utils/migrations";
@@ -26,22 +28,12 @@ export function Onboarding({ onContinue }: OnboardingProps) {
         setThemeMode, 
         accentColor, 
         themeMode,
-        switchUser
+        locale,
+        setLocale,
+        switchUser,
+        setOnboardingComplete
     } = useAppContext();
-
-    // Step 1: Language
-    const [language, setLanguage] = useState(() => {
-        try {
-            return localStorage.getItem(STORAGE_KEYS.LANGUAGE) || "en";
-        } catch {
-            return "en";
-        }
-    });
-
-    // Auto-save language
-    useEffect(() => {
-        localStorage.setItem(STORAGE_KEYS.LANGUAGE, language);
-    }, [language]);
+    const { t } = useI18n();
 
     // Step 2: Account
     const [fullName, setFullName] = useState("");
@@ -112,6 +104,15 @@ export function Onboarding({ onContinue }: OnboardingProps) {
         
         // Delay slightly to show "Finishing up..."
         setTimeout(() => {
+            // Persist language preference in soft memory for reload/continue flows
+            try {
+                localStorage.setItem(STORAGE_KEYS.LANGUAGE, locale);
+            } catch {
+                // Ignore storage failures (private mode, quota, etc.)
+            }
+            // Mark onboarding as complete in System Config
+            setOnboardingComplete(true);
+            
             updateStoredVersion(); // Commit the session as valid
             onContinue();
         }, 1500);
@@ -148,17 +149,17 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                 {step === "finishing" && <Loader2 className="w-5 h-5 text-white animate-spin" />}
                             </div>
                             <div>
-                                <CardTitle className="text-xl text-white font-bold tracking-wide">
-                                    {step === "language" && "Welcome to Aurora"}
-                                    {step === "account" && "Create Your Account"}
-                                    {step === "theme" && "Personalize"}
-                                    {step === "finishing" && "Setting up..."}
+                                    <CardTitle className="text-xl text-white font-bold tracking-wide">
+                                    {step === "language" && t('onboarding.steps.language.title')}
+                                    {step === "account" && t('onboarding.steps.account.title')}
+                                    {step === "theme" && t('onboarding.steps.theme.title')}
+                                    {step === "finishing" && t('onboarding.steps.finishing.title')}
                                 </CardTitle>
                                 <CardDescription className="text-white/60">
-                                    {step === "language" && "Select your language to get started"}
-                                    {step === "account" && "Set up the primary administrator account"}
-                                    {step === "theme" && "Make it yours"}
-                                    {step === "finishing" && "Applying configuration"}
+                                    {step === "language" && t('onboarding.steps.language.description')}
+                                    {step === "account" && t('onboarding.steps.account.description')}
+                                    {step === "theme" && t('onboarding.steps.theme.description')}
+                                    {step === "finishing" && t('onboarding.steps.finishing.description')}
                                 </CardDescription>
                             </div>
                         </div>
@@ -183,25 +184,19 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                     exit={{ opacity: 0, x: -10 }}
                                     className="space-y-3"
                                 >
-                                    {[
-                                        { id: "en", label: "English" },
-                                        { id: "es", label: "Español (Unavailable)", disabled: true },
-                                        { id: "fr", label: "Français (Unavailable)", disabled: true }
-                                    ].map((lang) => (
+                                    {SUPPORTED_LOCALES.map((lang) => (
                                         <button
-                                            key={lang.id}
-                                            disabled={lang.disabled}
-                                            onClick={() => setLanguage(lang.id)}
+                                            key={lang.locale}
+                                            onClick={() => setLocale(lang.locale)}
                                             className={cn(
                                                 "w-full p-4 rounded-xl border text-left flex justify-between items-center transition-all group",
-                                                language === lang.id 
+                                                locale === lang.locale 
                                                     ? "bg-white/10 border-white/40 ring-1 ring-white/20" 
-                                                    : "bg-transparent border-white/5 hover:bg-white/5 hover:border-white/10",
-                                                lang.disabled && "opacity-50 cursor-not-allowed"
+                                                    : "bg-transparent border-white/5 hover:bg-white/5 hover:border-white/10"
                                             )}
                                         >
-                                            <span className={cn("font-medium transition-colors", language === lang.id ? "text-white" : "text-white/70 group-hover:text-white")}>{lang.label}</span>
-                                            {language === lang.id && <Check className="w-5 h-5 text-white" />}
+                                            <span className={cn("font-medium transition-colors", locale === lang.locale ? "text-white" : "text-white/70 group-hover:text-white")}>{lang.label}</span>
+                                            {locale === lang.locale && <Check className="w-5 h-5 text-white" />}
                                         </button>
                                     ))}
                                 </motion.div>
@@ -217,9 +212,9 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                 >
                                     <div className="grid gap-4">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-white/80">Full Name</label>
+                                            <label className="text-sm font-medium text-white/80">{t('onboarding.account.fullName')}</label>
                                             <GlassInput 
-                                                placeholder="Example: John Doe" 
+                                                placeholder={t('onboarding.account.fullNamePlaceholder')}
                                                 value={fullName}
                                                 onChange={(e) => handleNameChange(e.target.value)}
                                                 autoFocus
@@ -227,7 +222,7 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-white/80">Username</label>
+                                            <label className="text-sm font-medium text-white/80">{t('onboarding.account.username')}</label>
                                             <GlassInput 
                                                 placeholder="johndoe" 
                                                 value={username}
@@ -237,7 +232,7 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                             {username && <p className="text-xs text-white/40 font-mono">/home/{username}</p>}
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-white/80">Password</label>
+                                            <label className="text-sm font-medium text-white/80">{t('onboarding.account.password')}</label>
                                             <GlassInput 
                                                 type="password"
                                                 placeholder="••••••••" 
@@ -247,9 +242,9 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-white/80">Password Hint (Optional)</label>
+                                            <label className="text-sm font-medium text-white/80">{t('onboarding.account.passwordHint')}</label>
                                             <GlassInput 
-                                                placeholder="Example: Name of your first pet" 
+                                                placeholder={t('onboarding.account.passwordHintPlaceholder')} 
                                                 value={hint}
                                                 onChange={(e) => setHint(e.target.value)}
                                                 className="bg-black/20 focus:bg-black/40"
@@ -274,7 +269,7 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                     className="space-y-6"
                                 >
                                     <div className="space-y-3">
-                                        <label className="text-sm font-medium text-white/80">Theme Mode</label>
+                                        <label className="text-sm font-medium text-white/80">{t('onboarding.theme.mode')}</label>
                                         <div className="grid grid-cols-2 gap-4">
                                             <button 
                                                 onClick={() => setThemeMode('neutral')} // Previewing
@@ -287,24 +282,24 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                                      <div className="absolute top-2 left-2 w-16 h-4 bg-white/10 rounded" />
                                                      <div className="absolute top-8 left-2 w-8 h-8 bg-white/5 rounded-full" />
                                                 </div>
-                                                <div className="text-white font-medium group-hover:text-white/90">Dark (Neutral)</div>
+                                                <div className="text-white font-medium group-hover:text-white/90">{t('onboarding.theme.darkMode')}</div>
                                             </button>
                                             <div className="relative opacity-50 cursor-not-allowed">
                                                  <div className="p-4 rounded-xl border border-white/5 bg-white/5 text-left h-full">
                                                     <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 border border-black/5 relative overflow-hidden">
                                                          <div className="absolute top-2 left-2 w-16 h-4 bg-black/10 rounded" />
                                                     </div>
-                                                    <div className="text-white font-medium">Light</div>
+                                                    <div className="text-white font-medium">{t('onboarding.theme.lightMode')}</div>
                                                  </div>
                                                  <div className="absolute inset-0 flex items-center justify-center">
-                                                     <span className="bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-xs text-white font-medium">Coming Soon</span>
+                                                     <span className="bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-xs text-white font-medium">{t('onboarding.theme.comingSoon')}</span>
                                                  </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="space-y-3">
-                                        <label className="text-sm font-medium text-white/80">Accent Color</label>
+                                        <label className="text-sm font-medium text-white/80">{t('onboarding.theme.accentColor')}</label>
                                         <div className="flex gap-4">
                                             {presetColors.map((color) => (
                                                 <button
@@ -355,9 +350,9 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                     animate={{ opacity: 1 }}
                                     className="flex flex-col items-center justify-center h-full py-12 text-center"
                                 >
-                                    <h3 className="text-2xl font-bold text-white mb-2">You're all set!</h3>
+                                    <h3 className="text-2xl font-bold text-white mb-2">{t('onboarding.finishing.title')}</h3>
                                     <p className="text-white/60 mb-8 max-w-xs mx-auto">
-                                        Aurora OS is ready. Redirecting you to the login screen...
+                                        {t('onboarding.finishing.subtitle')}
                                     </p>
                                     <div className="w-64 bg-white/10 rounded-full h-1.5 overflow-hidden">
                                         <motion.div 
@@ -382,13 +377,13 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                     onClick={() => setStep(step === "theme" ? "account" : "language")}
                                     className="text-white/60 hover:text-white"
                                 >
-                                    Back
+                                    {t('onboarding.buttons.back')}
                                 </GlassButton>
                             )}
 
                             {step === "language" && (
                                 <GlassButton onClick={handleLanguageNext} className="group">
-                                    Next <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
+                                    {t('onboarding.buttons.next')} <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
                                 </GlassButton>
                             )}
                             
@@ -398,13 +393,13 @@ export function Onboarding({ onContinue }: OnboardingProps) {
                                     disabled={isCreatingUser}
                                     className="min-w-[100px]"
                                 >
-                                    {isCreatingUser ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Next <ChevronRight className="w-4 h-4 ml-2" /></>}
+                                    {isCreatingUser ? <Loader2 className="w-4 h-4 animate-spin" /> : <>{t('onboarding.buttons.next')} <ChevronRight className="w-4 h-4 ml-2" /></>}
                                 </GlassButton>
                             )}
 
                             {step === "theme" && (
                                 <GlassButton onClick={handleThemeNext} style={{ backgroundColor: previewAccent }} className="px-6 shadow-lg shadow-black/20 hover:shadow-black/40">
-                                    Start Using Aurora
+                                    {t('onboarding.buttons.startUsing')}
                                 </GlassButton>
                             )}
                         </CardFooter>

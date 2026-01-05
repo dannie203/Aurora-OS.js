@@ -3,19 +3,22 @@ import { TerminalCommand } from '../types';
 export const help: TerminalCommand = {
     name: 'help',
     description: 'Show this help message',
-    execute: ({ allCommands }) => {
+    descriptionKey: 'terminal.commands.help.description',
+    execute: ({ allCommands, t }) => {
         const visibleCommands = allCommands.filter(c => !c.hidden);
         const longestName = Math.max(...visibleCommands.map(c => c.name.length));
 
         const output = [
-            'Available commands:',
+            t('terminal.help.availableCommands'),
             ...visibleCommands.map(c => {
                 const padding = ' '.repeat(longestName - c.name.length + 2);
-                const usage = c.usage ? ` (Usage: ${c.usage})` : '';
-                return `  ${c.name}${padding}- ${c.description}${usage}`;
+                const desc = c.descriptionKey ? t(c.descriptionKey) : c.description;
+                const usageText = c.usageKey ? t(c.usageKey) : (c.usage || '');
+                const usage = usageText ? ` (${t('terminal.help.usage')}: ${usageText})` : '';
+                return `  ${c.name}${padding}- ${desc}${usage}`;
             }),
             '',
-            '  [app]           - Launch installed applications (e.g. Finder)',
+            `  [app]           - ${t('terminal.help.appLaunchHelp')}`,
             ''
         ];
 

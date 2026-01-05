@@ -5,7 +5,7 @@
 - **Onboarding Wizard**: A new "First Run Experience" (OOBE) that guides users through Language selection, Admin Account creation, and personalization.
 - **User Management**: "Users & Groups" settings now support creating, deleting, and editing users (including Admin role toggle).
 - **Admin Privileges**: Strict permission model where only `root` or `admin` group members can manage users.
-- **Localization (i18n)**: Added foundational support for multi-language interfaces (i18next), starting with English.
+- **Localization (i18n)**: Added foundational support for multi-language interfaces (i18next), starting with English, Spanish, and French.
 
 ### Improved
 
@@ -14,6 +14,7 @@
 - **Boot Sequence**: Fixed duplicate boot glitch and cleaned up the initial boot flow.
 - **Ghost Directories**: Resolved the issue where `/home/user` was incorrectly created even when that user didn't exist.
 - **Security**: `addUserToGroup` now correctly syncs between user objects and group lists.
+- **Terminal**: Command history and visible output are now preserved while the user is still logged in (saves in case of crash).
 
 ## v0.7.9
 

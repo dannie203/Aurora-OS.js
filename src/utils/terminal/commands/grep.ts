@@ -3,7 +3,9 @@ import { TerminalCommand } from '../types';
 export const grep: TerminalCommand = {
     name: 'grep',
     description: 'Print lines matching a pattern',
+    descriptionKey: 'terminal.commands.grep.description',
     usage: 'grep <pattern> <file>',
+    usageKey: 'terminal.commands.grep.usage',
     execute: ({ args, fileSystem: { readFile }, resolvePath }) => {
         if (args.length < 2) {
             return { output: ['grep: missing pattern or file operand'], error: true };

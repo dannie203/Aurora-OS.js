@@ -4,7 +4,9 @@ import { checkPermissions } from '../../../utils/fileSystemUtils';
 export const rm: TerminalCommand = {
     name: 'rm',
     description: 'Remove file or directory',
+    descriptionKey: 'terminal.commands.rm.description',
     usage: 'rm <name>',
+    usageKey: 'terminal.commands.rm.usage',
     execute: ({ args, fileSystem, resolvePath, terminalUser }) => {
         if (args.length === 0) {
             return { output: ['rm: missing operand'], error: true };

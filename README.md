@@ -75,7 +75,7 @@ This is the ideal phase to influence direction, architecture, and gameplay syste
 
 ## 🚀 Getting Started
 
-> **Prerequisite**: Node.js 24.0.0+ is required.
+> **Prerequisite**: Node.js 24.0.0+ is required.  
 > **Browser**: Chromium-based browsers (Chrome, Edge, Brave, etc.)
 
 ```bash
@@ -92,7 +92,7 @@ Or use the [GitHub Pages](https://mental-os.github.io/Aurora-OS.js) (LIVE DEMO)
 - **Onboarding Wizard**: A new "First Run Experience" (OOBE) that guides users through Language selection, Admin Account creation, and personalization.
 - **User Management**: "Users & Groups" settings now support creating, deleting, and editing users (including Admin role toggle).
 - **Admin Privileges**: Strict permission model where only `root` or `admin` group members can manage users.
-- **Localization (i18n)**: Added foundational support for multi-language interfaces (i18next), starting with English.
+- **Localization (i18n)**: Added foundational support for multi-language interfaces (i18next), starting with English, Spanish, and French.
 
 ### Improved
 
@@ -101,6 +101,7 @@ Or use the [GitHub Pages](https://mental-os.github.io/Aurora-OS.js) (LIVE DEMO)
 - **Boot Sequence**: Fixed duplicate boot glitch and cleaned up the initial boot flow.
 - **Ghost Directories**: Resolved the issue where `/home/user` was incorrectly created even when that user didn't exist.
 - **Security**: `addUserToGroup` now correctly syncs between user objects and group lists.
+- **Terminal**: Command history and visible output are now preserved while the user is still logged in (saves in case of crash).
 
 ### [View full version history](HISTORY.md)
 

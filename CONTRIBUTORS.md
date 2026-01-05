@@ -18,8 +18,12 @@ GitHub: https://github.com/mental-os
 _Your name could be here._
 
 **Oklyne**  
-Contribution: Code  
+Contribution: Code, Testing
 Link: https://github.com/oklyne
+
+**Nguyễn Trần Duy Hưng // dannie203**  
+Contribution: Code, Translation, Testing
+Link: https://github.com/dannie203
 
 ## 🎨 Design & UX
 

@@ -154,4 +154,37 @@ describe('useTerminalLogic', () => {
             expect(last?.output.join(' ')).toContain('a+b.txt');
         });
     });
+    it('persists history to localStorage', async () => {
+        const { result } = renderHook(() => {
+            const fs = useFileSystem();
+            const terminal = useTerminalLogic(undefined, 'user');
+            return { fs, terminal };
+        }, { wrapper });
+
+        // Setup environment
+        await waitFor(() => expect(result.current.fs.users.length).toBeGreaterThan(0));
+        await act(async () => { result.current.fs.login('root', 'admin'); });
+        await act(async () => { result.current.fs.addUser('user', 'User', '1234'); });
+        await act(async () => { result.current.fs.login('user', '1234'); });
+
+        // Calculate initial call count to account for internal state updates
+        // const initialSetItemCalls = vi.mocked(localStorage.setItem).mock.calls.length;
+
+        // Execute command
+        await act(async () => {
+            result.current.terminal.setInput('echo persistence_test');
+        });
+        await act(async () => {
+             result.current.terminal.handleKeyDown({ key: 'Enter', preventDefault: () => { } } as any);
+        });
+
+        // Verify localStorage was updated
+        // We look for 'aurora_terminal_history' key
+        await waitFor(() => {
+             expect(localStorage.setItem).toHaveBeenCalledWith(
+                 'aurora_terminal_history', 
+                 expect.stringContaining('persistence_test')
+             );
+        });
+    });
 });

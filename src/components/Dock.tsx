@@ -5,6 +5,7 @@ import type { WindowState } from '../hooks/useWindowManager';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { useAppContext } from './AppContext';
 import { useFileSystem } from './FileSystemContext';
+import { useI18n } from '../i18n/index';
 import { cn } from './ui/utils';
 import { getDockApps } from '../config/appRegistry';
 import { AppIcon } from './ui/AppIcon';
@@ -17,6 +18,7 @@ interface DockProps {
 }
 
 function DockComponent({ onOpenApp, onRestoreWindow, onFocusWindow, windows }: DockProps) {
+    const { t } = useI18n();
   const { dockBackground, blurStyle } = useThemeColors();
   const { reduceMotion, disableShadows, disableGradients, accentColor, devMode } = useAppContext();
   const { getNodeAtPath, homePath, installedApps } = useFileSystem();
@@ -131,7 +133,7 @@ function DockComponent({ onOpenApp, onRestoreWindow, onFocusWindow, windows }: D
   };
 
   return (
-    <div className="absolute left-4 top-1/2 -translate-y-1/2 z-[9998]">
+    <div className="absolute left-4 top-1/2 -translate-y-1/2 z-9998">
       <motion.div
         id="dock-main"
         className={cn(
@@ -153,6 +155,8 @@ function DockComponent({ onOpenApp, onRestoreWindow, onFocusWindow, windows }: D
             const hasWindows = appWindows.length > 0;
             const windowCount = appWindows.length;
 
+            const appName = app.nameKey ? t(app.nameKey) : app.name;
+
 
 
             return (
@@ -163,7 +167,7 @@ function DockComponent({ onOpenApp, onRestoreWindow, onFocusWindow, windows }: D
                 )}
 
                 <motion.button
-                  aria-label={app.name}
+                  aria-label={appName}
                   className="relative group"
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
@@ -210,7 +214,7 @@ function DockComponent({ onOpenApp, onRestoreWindow, onFocusWindow, windows }: D
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0 }}
                     >
-                      {app.name}
+                      {appName}
                       {hasWindows && ` (${windowCount})`}
                     </motion.div>
                   )}
@@ -221,15 +225,15 @@ function DockComponent({ onOpenApp, onRestoreWindow, onFocusWindow, windows }: D
 
 
           {/* Separator */}
-          <div className="w-8 h-[1px] bg-white/10 my-1 mx-auto" />
+          <div className="w-8 h-px bg-white/10 my-1 mx-auto" />
 
           {/* Trash Icon */}
           <motion.button
-            aria-label="Trash"
+            aria-label={t('fileManager.places.trash')}
             className={cn(
               "relative w-12 h-12 rounded-xl flex items-center justify-center text-white transition-all border border-white/5",
               !disableShadows && "shadow-lg hover:shadow-xl",
-              !disableGradients && "bg-gradient-to-br from-gray-700 to-gray-900"
+              !disableGradients && "bg-linear-to-br from-gray-700 to-gray-900"
             )}
             style={disableGradients ? { backgroundColor: '#374151' } : {}}
             onMouseEnter={() => setHoveredIndex(visibleApps.length)}
@@ -250,7 +254,7 @@ function DockComponent({ onOpenApp, onRestoreWindow, onFocusWindow, windows }: D
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0 }}
               >
-                Trash
+                {t('fileManager.places.trash')}
               </motion.div>
             )}
           </motion.button>

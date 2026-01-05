@@ -26,7 +26,7 @@ import { useAuth } from "../hooks/fileSystem/useAuth";
 import { useFileSystemQueries } from "../hooks/fileSystem/useFileSystemQueries";
 import { useFileSystemMutations } from "../hooks/fileSystem/useFileSystemMutations";
 import { notify } from "../services/notifications";
-import { getCoreApps } from "../config/appRegistry";
+import { CORE_APP_IDS } from "../config/appConstants";
 import { STORAGE_KEYS } from "../utils/memory";
 
 export interface FileSystemContextType {
@@ -166,7 +166,7 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
     }
     // Default to only core apps (mimicking Linux behavior)
     // Optional apps must be installed via App Store
-    return new Set(getCoreApps().map((app) => app.id));
+    return new Set(CORE_APP_IDS);
   });
 
   // Persist installed apps
@@ -269,8 +269,8 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
       }
 
       // Check if app is core (cannot uninstall)
-      const coreAppIds = getCoreApps().map((app) => app.id);
-      if (coreAppIds.includes(appId)) {
+      // Checks against CORE_APP_IDS constant instead of registry
+      if (CORE_APP_IDS.includes(appId as any)) {
         notify.system(
           "error",
           "App Store",
@@ -315,8 +315,7 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
   // 6. Reset Logic (Unified)
   const resetFileSystem = useCallback(() => {
     // Reset installed apps to core apps only
-    const coreAppIds = getCoreApps().map((app) => app.id);
-    setInstalledApps(new Set(coreAppIds));
+    setInstalledApps(new Set(CORE_APP_IDS));
     localStorage.removeItem("aurora-installed-apps");
 
     // Reset filesystem and auth

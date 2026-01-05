@@ -3,7 +3,9 @@ import { TerminalCommand } from '../types';
 export const su: TerminalCommand = {
     name: 'su',
     description: 'Change user ID or become superuser',
+    descriptionKey: 'terminal.commands.su.description',
     usage: 'su [username] [password]',
+    usageKey: 'terminal.commands.su.usage',
     execute: async (context) => {
         const { args, fileSystem, terminalUser, spawnSession, prompt } = context;
         let targetUser = 'root';

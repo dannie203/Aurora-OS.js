@@ -22,6 +22,7 @@ export interface CommandContext {
     setIsSudoAuthorized: (v: boolean) => void;
     verifyPassword: (username: string, passwordToTry: string) => boolean;
     print: (content: string | React.ReactNode) => void;
+    t: (key: string, options?: any) => string;
 }
 
 export interface CommandResult {
@@ -34,7 +35,9 @@ export interface CommandResult {
 export interface TerminalCommand {
     name: string;
     description: string;
+    descriptionKey?: string;
     usage?: string;
+    usageKey?: string;
     hidden?: boolean;
     execute: (context: CommandContext) => Promise<CommandResult> | CommandResult;
 }

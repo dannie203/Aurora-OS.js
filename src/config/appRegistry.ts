@@ -19,7 +19,9 @@ import { AppMenuConfig } from '../types';
 export interface AppMetadata {
     id: string;
     name: string;
+    nameKey?: string;
     description: string;
+    descriptionKey?: string;
     icon: LucideIcon;
     iconColor: string;           // Gradient class for dock
     iconSolid: string;           // Solid color fallback
@@ -36,7 +38,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     finder: {
         id: 'finder',
         name: 'Finder',
+        nameKey: 'apps.finder',
         description: 'File Manager',
+        descriptionKey: 'appDescriptions.finder',
         icon: FolderOpen,
         iconColor: 'from-blue-500 to-blue-600',
         iconSolid: '#3b82f6',
@@ -49,7 +53,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     browser: {
         id: 'browser',
         name: 'Browser',
+        nameKey: 'apps.browser',
         description: 'Access the web',
+        descriptionKey: 'appDescriptions.browser',
         icon: Globe,
         iconColor: 'from-blue-400 to-indigo-500',
         iconSolid: '#6366f1',
@@ -62,7 +68,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     mail: {
         id: 'mail',
         name: 'Mail',
+        nameKey: 'apps.mail',
         description: 'Read and write emails',
+        descriptionKey: 'appDescriptions.mail',
         icon: Mail,
         iconColor: 'from-blue-400 to-sky-400',
         iconSolid: '#38bdf8',
@@ -75,7 +83,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     appstore: {
         id: 'appstore',
         name: 'App Store',
+        nameKey: 'apps.appStore',
         description: 'Download and manage apps',
+        descriptionKey: 'appDescriptions.appStore',
         icon: ShoppingBag,
         iconColor: 'from-sky-500 to-blue-500',
         iconSolid: '#0ea5e9',
@@ -88,7 +98,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     terminal: {
         id: 'terminal',
         name: 'Terminal',
+        nameKey: 'apps.terminal',
         description: 'Command line interface',
+        descriptionKey: 'appDescriptions.terminal',
         icon: Terminal,
         iconColor: 'from-gray-700 to-gray-800',
         iconSolid: '#374151',
@@ -101,7 +113,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     settings: {
         id: 'settings',
         name: 'System Settings',
+        nameKey: 'apps.systemSettings',
         description: 'Configure your system',
+        descriptionKey: 'appDescriptions.systemSettings',
         icon: Settings,
         iconColor: 'from-slate-500 to-zinc-600',
         iconSolid: '#71717a',
@@ -116,7 +130,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     notepad: {
         id: 'notepad',
         name: 'Notepad',
+        nameKey: 'apps.notepad',
         description: 'Edit text files',
+        descriptionKey: 'appDescriptions.notepad',
         icon: FileText,
         iconColor: 'from-yellow-400 to-amber-500',
         iconSolid: '#f59e0b',
@@ -129,7 +145,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     messages: {
         id: 'messages',
         name: 'Messages',
+        nameKey: 'apps.messages',
         description: 'Chat with friends',
+        descriptionKey: 'appDescriptions.messages',
         icon: MessageSquare,
         iconColor: 'from-green-500 to-emerald-600',
         iconSolid: '#10b981',
@@ -142,7 +160,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     calendar: {
         id: 'calendar',
         name: 'Calendar',
+        nameKey: 'apps.calendar',
         description: 'Manage your schedule',
+        descriptionKey: 'appDescriptions.calendar',
         icon: Calendar,
         iconColor: 'from-red-500 to-red-600',
         iconSolid: '#ef4444',
@@ -155,7 +175,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     photos: {
         id: 'photos',
         name: 'Photos',
+        nameKey: 'apps.photos',
         description: 'View and manage photos',
+        descriptionKey: 'appDescriptions.photos',
         icon: Image,
         iconColor: 'from-pink-500 to-rose-600',
         iconSolid: '#e11d48',
@@ -168,7 +190,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     music: {
         id: 'music',
         name: 'Music',
+        nameKey: 'apps.music',
         description: 'Play your favorite music',
+        descriptionKey: 'appDescriptions.music',
         icon: Music,
         iconColor: 'from-purple-500 to-purple-600',
         iconSolid: '#a855f7',
@@ -182,7 +206,9 @@ export const APP_REGISTRY: Record<string, AppMetadata> = {
     'dev-center': {
         id: 'dev-center',
         name: 'DevCenter',
+        nameKey: 'apps.devCenter',
         description: 'Developer Tools',
+        descriptionKey: 'appDescriptions.devCenter',
         icon: Code,
         iconColor: 'from-indigo-500 to-purple-600',
         iconSolid: '#6366f1',
@@ -221,3 +247,4 @@ export function getDockApps(installedAppIds: Set<string>): AppMetadata[] {
 export function getAppsByCategory(category: AppMetadata['category']): AppMetadata[] {
     return getAllApps().filter(app => app.category === category);
 }
+
