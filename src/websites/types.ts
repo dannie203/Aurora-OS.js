@@ -21,6 +21,7 @@ export type WebsiteCategory =
   | 'government'
   | 'corporate'
   | 'search'
+  | 'mail'
   | 'other';
 
 /**

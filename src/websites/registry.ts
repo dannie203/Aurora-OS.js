@@ -12,6 +12,8 @@ import { TechBlog } from './sites/TechBlog';
 import { SecureBank } from './sites/SecureBank';
 import { SearchEngine } from './sites/SearchEngine';
 import {HackWithJack} from "@/websites/sites/HackWithJack.tsx";
+import {TrustMail} from "@/websites/sites/TrustMail.tsx";
+import {ProMail} from "@/websites/sites/ProMail.tsx";
 
 /**
  * All registered websites
@@ -102,6 +104,32 @@ export const websites: Website[] = [
     searchable: true,
     keywords: ['bank', 'banking', 'finance', 'money', 'account', 'secure'],
     aliases: ['www.securebank.com', 'online.securebank.com']
+  },
+  {
+    id: 'trustmail',
+    domain: 'trustmail.com',
+    name: 'TrustMail',
+    description: 'Modern email service designed for speed, reliability and simplicity',
+    category: 'mail',
+    security: 'secure',
+    color: '#1b7c0d',
+    component: TrustMail,
+    searchable: true,
+    keywords: ['message', 'email', 'mail', 'account', 'secure'],
+    aliases: ['www.trustmail.com', 'mail.trustmail.com']
+  },
+  {
+    id: 'promail',
+    domain: 'promail.pro',
+    name: 'ProMail',
+    description: 'Professional email service for businesses and individuals worldwide',
+    category: 'mail',
+    security: 'secure',
+    color: '#4f46e5',
+    component: ProMail,
+    searchable: true,
+    keywords: ['message', 'email', 'mail', 'account', 'professional', 'secure'],
+    aliases: ['www.promail.pro', 'mail.promail.pro']
   },
 ];
 

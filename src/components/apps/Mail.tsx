@@ -1,6 +1,6 @@
 import { AppTemplate } from "./AppTemplate";
-import { Inbox, Trash2, Archive, Star, Search, Reply, Forward, Paperclip, Download } from "lucide-react";
-import { useState, useMemo } from "react";
+import { Inbox, Trash2, Archive, Star, Search, Reply, Forward, Paperclip, Download, Eye, EyeOff, LogOut } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
 import { useAppContext } from "../AppContext";
 import { useSessionStorage } from "@/hooks/useSessionStorage.ts";
 import { useElementSize } from "@/hooks/useElementSize.ts";
@@ -35,166 +35,154 @@ export interface Email {
   attachments?: EmailAttachment[];
 }
 
-const mockEmails: Email[] = [
-  {
-    id: "1",
-    from: "Sarah Chen",
-    fromEmail: "sarah.chen@company.com",
-    subject: "Q4 Project Update - Review Required",
-    body: `Hi there,
+const mockEmails: Email[] = [];
 
-I hope this email finds you well. I wanted to share the **latest updates** on our Q4 project timeline.
-
-Key highlights:
-
-- **Phase 1:** Completed ahead of schedule
-- *Phase 2:* Currently in progress, 75% done
-- **Phase 3:** Scheduled to start next week
-
-Please review the attached documents and let me know if you have any concerns. We need your approval by **Friday EOD**.
-
-Best regards,
-Sarah`,
-    timestamp: new Date("2024-01-04T10:30:00"),
-    read: false,
-    starred: true,
-    archived: false,
-    deleted: false,
-    attachments: [
-      {
-        id: "att-1-1",
-        name: "Q4_Project_Timeline.txt",
-        size: 245600,
-        type: "application/text",
-        content:
-          "Q4 Project Timeline\n\nPhase 1: Infrastructure Setup (Completed)\nPhase 2: Development (In Progress - 75%)\nPhase 3: Testing & Deployment (Scheduled)\n\nDetailed timeline and milestones attached.",
-      },
-      {
-        id: "att-1-2",
-        name: "Budget_Report.txt",
-        size: 128400,
-        type: "application/text",
-        content:
-          "Budget Report Q4\n\nTotal Budget: $500,000\nSpent: $375,000 (75%)\nRemaining: $125,000\n\nBreakdown by department included.",
-      },
-    ],
-  },
-  {
-    id: "2",
-    from: "DevOps Team",
-    fromEmail: "devops@internal.system",
-    subject: "System Maintenance Scheduled - Tomorrow 2AM",
-    body: `Dear Team,
-
-This is an automated notification regarding scheduled system maintenance.
-
-**Maintenance Window:**
-
-- **Date:** January 5, 2024
-- **Time:** 2:00 AM - 4:00 AM EST
-- *Expected Downtime:* Approximately 2 hours
-
-During this time, the following services will be **unavailable**:
-
-- Authentication servers
-- Database clusters
-- API endpoints
-
-Please plan accordingly. *All services will be restored by 4:00 AM.*
-
-Thank you for your patience.`,
-    timestamp: new Date("2024-01-04T09:15:00"),
-    read: true,
-    starred: false,
-    archived: false,
-    deleted: false,
-  },
-  {
-    id: "3",
-    from: "Michael Rodriguez",
-    fromEmail: "mike.r@external.com",
-    subject: "Re: Collaboration Opportunity",
-    body: `Hi,
-
-Thank you for reaching out! I'm *very interested* in exploring this collaboration opportunity.
-
-I've reviewed your proposal and I think it aligns perfectly with our current goals. Here are my thoughts:
-
-1. **Timeline:** The proposed 6-month timeline seems reasonable
-2. **Budget:** We might need to discuss adjustments for Q2
-3. *Resources:* I can commit 2 senior developers and 1 designer
-
-Would you be available for a call next week to discuss the details? I'm free on **Tuesday afternoon** or **Thursday morning**.
-
-Looking forward to working together!
-
-Best,
-Michael`,
-    timestamp: new Date("2024-01-03T16:45:00"),
-    read: true,
-    starred: true,
-    archived: false,
-    deleted: false,
-  },
-  {
-    id: "4",
-    from: "Newsletter Team",
-    fromEmail: "newsletter@tech-weekly.com",
-    subject: "Your Weekly Tech Digest - January Edition",
-    body: `Hello Tech Enthusiast!
-
-Welcome to this week's edition of **Tech Weekly Digest**.
-
-**📱 Top Stories This Week:**
-
-- **AI Breakthrough:** New model achieves 99% accuracy in medical diagnosis
-- *Quantum Computing:* Major advancement in error correction announced
-- **Web Development:** React 19 beta released with exciting new features
-- Cybersecurity alert: Critical vulnerability patched in popular framework
-
-*Featured Article:*
-
-**"The Future of Remote Work"** - An in-depth analysis of how workplace dynamics are evolving in 2024. Companies are adopting *hybrid models* at an unprecedented rate.
-
-Click below to read the full newsletter on our website.
-
-Happy reading! 📚`,
-    timestamp: new Date("2024-01-02T08:00:00"),
-    read: false,
-    starred: false,
-    archived: false,
-    deleted: false,
-    attachments: [
-      {
-        id: "att-4-1",
-        name: "Tech_Weekly_January.text",
-        size: 1024000,
-        type: "application/text",
-        content:
-          "Tech Weekly Digest - January Edition\n\nFull newsletter with articles, interviews, and technology trends.",
-      },
-    ],
-  },
-];
+// Load emails from global mailbox storage
+const loadMailboxEmails = (): Email[] => {
+  const mailboxKey = 'global_mailbox';
+  const mailboxData = localStorage.getItem(mailboxKey);
+  if (mailboxData) {
+    try {
+      const { emails } = JSON.parse(mailboxData);
+      return emails || [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
 
 export function Mail({ owner }: { owner?: string }) {
   const { t } = useI18n();
   const { createFile, resolvePath } = useFileSystem();
+  const { accentColor } = useAppContext();
+
+  // Authentication state
+  const [currentUser, setCurrentUser] = useSessionStorage<string | null>(
+    "mail-current-user",
+    null,
+    owner
+  );
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
+
   const [activeMailbox, setActiveMailbox] = useSessionStorage(
     "mail-active-mailbox",
     "inbox",
     owner
   );
+
   const [storedEmails, setStoredEmails] = useSessionStorage<Email[]>(
     "mail-emails",
     mockEmails,
     owner
   );
-  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(
-    storedEmails[0]?.id || null
-  );
+  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { accentColor } = useAppContext();
+
+  // Load emails from mailbox storage when user logs in
+  useEffect(() => {
+    if (currentUser) {
+      const mailboxEmails = loadMailboxEmails();
+      setStoredEmails(mailboxEmails);
+      // Select the first email if available
+      if (mailboxEmails.length > 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSelectedEmailId(mailboxEmails[0].id);
+      }
+    }
+  }, [currentUser, setStoredEmails]);
+
+  // Responsive container measurement - must be called before early return
+  const [containerRef, { width }] = useElementSize();
+  const showSidebar = width >= 450;
+
+  // Handle login - supports both TrustMail and local accounts
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError("");
+
+    if (!loginEmail.trim()) {
+      setAuthError("Please enter your email");
+      return;
+    }
+
+    if (!loginPassword) {
+      setAuthError("Please enter your password");
+      return;
+    }
+
+    setAuthLoading(true);
+    setTimeout(() => {
+      // Check TrustMail accounts
+      const trustmailAccounts = JSON.parse(
+        localStorage.getItem("trustmail_accounts") || "{}"
+      );
+
+      if (trustmailAccounts[loginEmail]) {
+        if (trustmailAccounts[loginEmail].password !== loginPassword) {
+          setAuthLoading(false);
+          setAuthError("Invalid password");
+          return;
+        }
+        setAuthLoading(false);
+        setCurrentUser(loginEmail);
+        setLoginEmail("");
+        setLoginPassword("");
+        return;
+      }
+
+      // Check ProMail accounts
+      const promailAccounts = JSON.parse(
+        localStorage.getItem("promail_accounts") || "{}"
+      );
+
+      if (promailAccounts[loginEmail]) {
+        if (promailAccounts[loginEmail].password !== loginPassword) {
+          setAuthLoading(false);
+          setAuthError("Invalid password");
+          return;
+        }
+        setAuthLoading(false);
+        setCurrentUser(loginEmail);
+        setLoginEmail("");
+        setLoginPassword("");
+        return;
+      }
+
+      // Check local mail accounts (legacy)
+      const mailAccounts = JSON.parse(
+        localStorage.getItem("mail_accounts") || "{}"
+      );
+
+      if (mailAccounts[loginEmail]) {
+        if (mailAccounts[loginEmail].password !== loginPassword) {
+          setAuthLoading(false);
+          setAuthError("Invalid password");
+          return;
+        }
+        setAuthLoading(false);
+        setCurrentUser(loginEmail);
+        setLoginEmail("");
+        setLoginPassword("");
+        return;
+      }
+
+      setAuthLoading(false);
+      setAuthError("Account not found");
+    }, 600);
+  };
+
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setLoginEmail("");
+    setLoginPassword("");
+    setAuthError("");
+  };
 
   // Ensure timestamps are Date objects (they become strings when stored in localStorage)
   const emails = useMemo(() => {
@@ -222,25 +210,6 @@ export function Mail({ owner }: { owner?: string }) {
     } else {
       setStoredEmails(value);
     }
-  };
-
-  const mailSidebar = {
-    sections: [
-      {
-        title: t("mail.sidebar.mailboxes"),
-        items: [
-          {
-            id: "inbox",
-            label: t("mail.sidebar.inbox"),
-            icon: Inbox,
-            badge: "4",
-          },
-          { id: "starred", label: t("mail.sidebar.starred"), icon: Star },
-          { id: "archived", label: t("mail.sidebar.archived"), icon: Archive },
-          { id: "trash", label: t("mail.sidebar.trash"), icon: Trash2 },
-        ],
-      },
-    ],
   };
 
   // Filter emails based on active mailbox
@@ -278,6 +247,105 @@ export function Mail({ owner }: { owner?: string }) {
   const selectedEmail = selectedEmailId
     ? filteredEmails.find((e) => e.id === selectedEmailId)
     : null;
+
+  // Show login page if not authenticated
+  if (!currentUser) {
+    return (
+      <AppTemplate
+        content={
+          <div className="min-h-full bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 flex items-center justify-center p-4">
+            <div className="w-full max-w-sm">
+              <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-700 rounded-xl p-6 shadow-2xl">
+                {/* Header */}
+                <div className="text-center mb-6">
+                  <h1 className="text-lg font-bold text-white">Mail</h1>
+                  <p className="text-xs text-gray-400">Sign in to your account</p>
+                </div>
+
+                {authError && (
+                  <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded text-xs text-red-400">
+                    {authError}
+                  </div>
+                )}
+
+                {/* Login Form */}
+                <form onSubmit={handleLogin} className="space-y-3">
+                  <div>
+                    <input
+                      type="email"
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      placeholder="Email"
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        placeholder="Password"
+                        className="w-full px-3 py-2 pr-9 bg-gray-800 border border-gray-700 rounded text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={authLoading}
+                    className="w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {authLoading ? "Signing in..." : "Sign In"}
+                  </button>
+                </form>
+
+                {/* Info */}
+                <div className="mt-4 pt-4 border-t border-gray-700 text-center">
+                  <p className="text-xs text-gray-400">Create an account via an email provider</p>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        hasSidebar={false}
+      />
+    );
+  }
+
+  const mailSidebar = {
+    sections: [
+      {
+        title: t("mail.sidebar.mailboxes"),
+        items: [
+          {
+            id: "inbox",
+            label: t("mail.sidebar.inbox"),
+            icon: Inbox,
+            badge: "4",
+          },
+          { id: "starred", label: t("mail.sidebar.starred"), icon: Star },
+          { id: "archived", label: t("mail.sidebar.archived"), icon: Archive },
+          { id: "trash", label: t("mail.sidebar.trash"), icon: Trash2 },
+        ],
+      },
+    ],
+  };
 
   const unreadCount = emails.filter(
     (e) => !e.read && !e.deleted && !e.archived
@@ -376,10 +444,6 @@ export function Mail({ owner }: { owner?: string }) {
       );
     }
   };
-
-  // Responsive container measurement
-  const [containerRef, { width }] = useElementSize();
-  const showSidebar = width >= 450;
 
   const content = ({ contentWidth }: { contentWidth: number }) => {
     const isCompact = contentWidth < 400;
@@ -668,15 +732,39 @@ export function Mail({ owner }: { owner?: string }) {
   };
 
   return (
-    <div ref={containerRef} className="h-full w-full">
-      <AppTemplate
-        sidebar={updatedSidebar}
-        content={content}
-        hasSidebar={showSidebar}
-        activeItem={activeMailbox}
-        onItemClick={(id) => setActiveMailbox(id)}
-        minContentWidth={0}
-      />
+    <div className="h-full w-full flex flex-col">
+      {/* User Header */}
+      <div className="bg-white/5 backdrop-blur-md border-b border-white/10 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <span className="text-white text-xs font-semibold">
+              {currentUser?.charAt(0).toUpperCase()}
+            </span>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-white">{currentUser}</p>
+          </div>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors text-sm font-medium"
+        >
+          <LogOut className="w-4 h-4" />
+          Sign Out
+        </button>
+      </div>
+
+      {/* Email Client */}
+      <div ref={containerRef} className="flex-1 min-h-0">
+        <AppTemplate
+          sidebar={updatedSidebar}
+          content={content}
+          hasSidebar={showSidebar}
+          activeItem={activeMailbox}
+          onItemClick={(id) => setActiveMailbox(id)}
+          minContentWidth={0}
+        />
+      </div>
     </div>
   );
 }
