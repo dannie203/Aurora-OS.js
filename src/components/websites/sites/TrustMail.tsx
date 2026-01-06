@@ -2,6 +2,7 @@
  * TrustMail - Fake email service website
  * Potential use: Phishing scenarios, credential harvesting, social engineering
  */
+import { encodePassword } from "../../../utils/authUtils";
 import { useState } from 'react';
 import { WebsiteHeader, WebsiteLayout, WebsiteContainer, WebsiteProps } from '@/components/websites';
 import { Mail, Lock, User, AlertCircle, CheckCircle, Eye, EyeOff, RefreshCcw } from 'lucide-react';
@@ -92,7 +93,7 @@ export function TrustMail({ owner }: WebsiteProps) {
         setLoading(true);
         setTimeout(() => {
             // Use the username directly to create email with @trustmail.com domain
-            const trustmailEmail = `${formData.email}@trustmail.com`;
+            const trustmailEmail = `${formData.email} @trustmail.com`;
 
             // Check if email already exists
             const existingAccounts = JSON.parse(localStorage.getItem('trustmail_accounts') || '{}');
@@ -104,7 +105,7 @@ export function TrustMail({ owner }: WebsiteProps) {
 
             const newAccount: TrustMailAccount = {
                 email: trustmailEmail,
-                password: formData.password,
+                password: encodePassword(formData.password),
                 createdAt: new Date().toISOString(),
                 owner: effectiveUser,
             };
@@ -125,7 +126,7 @@ export function TrustMail({ owner }: WebsiteProps) {
                 // Write credentials file
                 const mailConfig = {
                     email: trustmailEmail,
-                    password: formData.password,
+                    password: encodePassword(formData.password),
                     provider: 'trustmail',
                     updatedAt: new Date().toISOString()
                 };
