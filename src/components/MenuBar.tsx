@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, memo } from 'react';
 import pkg from '../../package.json';
-import { Orbit, Wifi, Battery } from 'lucide-react';
+import { Orbit, Wifi } from 'lucide-react';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { useFullscreen } from '../hooks/useFullscreen';
 import { CreditsDrawer } from './Credits/CreditsDrawer';
@@ -9,7 +9,9 @@ import { useAppContext } from './AppContext';
 import { useFileSystem } from './FileSystemContext';
 import { AudioApplet } from './AudioApplet';
 import { NotificationCenter } from './NotificationCenter';
-import { hardReset, clearSession } from '../utils/memory';
+import { BatteryApplet } from './BatteryApplet';
+import { MemoryApplet } from './MemoryApplet';
+import { hardReset, clearSession, STORAGE_KEYS } from '../utils/memory';
 import {
   Menubar,
   MenubarMenu,
@@ -35,21 +37,19 @@ function MenuBarComponent({ focusedApp, onOpenApp }: MenuBarProps) {
   const { devMode, disableShadows, setIsLocked, locale } = useAppContext();
   const { logout, currentUser } = useFileSystem();
   const { t } = useI18n();
-  const [currentTime, setCurrentTime] = useState(() =>
-    new Date().toLocaleTimeString(locale, {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    })
-  );
+  const [timeMode, setTimeMode] = useState<'server' | 'local'>(() => {
+    // Initialize from storage or default to 'server'
+    const saved = localStorage.getItem(STORAGE_KEYS.TIME_MODE);
+    return (saved === 'local' || saved === 'server') ? saved : 'server';
+  });
 
-  const [currentDate, setCurrentDate] = useState(() =>
-    new Date().toLocaleDateString(locale, {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
-    })
-  );
+  // Persist preference
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.TIME_MODE, timeMode);
+  }, [timeMode]);
+
+  const [currentTime, setCurrentTime] = useState('');
+  const [currentDate, setCurrentDate] = useState('');
 
   // Hidden Credits Trigger
   const [showCredits, setShowCredits] = useState(false);
@@ -78,22 +78,28 @@ function MenuBarComponent({ focusedApp, onOpenApp }: MenuBarProps) {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      setCurrentTime(now.toLocaleTimeString(locale, {
+      const options: Intl.DateTimeFormatOptions = {
         hour: '2-digit',
         minute: '2-digit',
-        hour12: false
-      }));
-      setCurrentDate(now.toLocaleDateString(locale, {
+        hour12: false,
+        timeZone: timeMode === 'server' ? 'UTC' : undefined
+      };
+
+      const dateOptions: Intl.DateTimeFormatOptions = {
         weekday: 'short',
         month: 'short',
-        day: 'numeric'
-      }));
+        day: 'numeric',
+        timeZone: timeMode === 'server' ? 'UTC' : undefined
+      };
+
+      setCurrentTime(now.toLocaleTimeString(locale, options) + (timeMode === 'server' ? ' UTC' : ''));
+      setCurrentDate(now.toLocaleDateString(locale, dateOptions));
     };
 
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, [locale]);
+  }, [locale, timeMode]);
 
   // Get the menu config for the focused app
   const activeApp = focusedApp ? getApp(focusedApp) : getApp('finder');
@@ -386,19 +392,22 @@ function MenuBarComponent({ focusedApp, onOpenApp }: MenuBarProps) {
 
       {/* Right side */}
       <div className="flex items-center gap-4 px-2">
-        <button className="text-white/90 hover:text-white transition-colors">
-          <Battery className="w-4 h-4" />
-        </button>
-        <button className="text-white/90 hover:text-white transition-colors">
+        <MemoryApplet />
+        <BatteryApplet key={currentUser} />
+        <button className="flex items-center justify-center text-white/90 hover:text-white transition-colors">
           <Wifi className="w-4 h-4" />
         </button>
         <AudioApplet />
         <NotificationCenter />
 
-        <div className="text-white/90 text-xs font-medium flex items-center gap-2">
+        <button 
+          onClick={() => setTimeMode(prev => prev === 'server' ? 'local' : 'server')}
+          className="text-white/90 text-xs font-medium flex items-center gap-2 hover:bg-white/10 px-2 py-1 rounded transition-colors"
+          title={timeMode === 'server' ? t('menubar.system.serverTime') : t('menubar.system.localTime')}
+        >
           <span>{currentDate}</span>
           <span>{currentTime}</span>
-        </div>
+        </button>
       </div>
     </div >
   );
