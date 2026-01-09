@@ -5,6 +5,7 @@ import { fr } from './locales/fr';
 import { ro } from './locales/ro';
 import { de } from './locales/de';
 import { pt } from './locales/pt';
+import { zh } from './locales/zh';
 
 export { SUPPORTED_LOCALES, type SupportedLocale, type TranslationDict } from './types';
 export const translations: Record<string, TranslationDict> = {
@@ -14,5 +15,6 @@ export const translations: Record<string, TranslationDict> = {
   ro,
   de,
   pt,
+  zh,
 };
 

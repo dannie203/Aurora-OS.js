@@ -139,7 +139,7 @@ export const fr: TranslationDict = {
       noResults: 'No languages found',
     },
     validation: {
-      required: 'Please fill in all required fields',
+      requiredFields: 'Veuillez remplir tous les champs requis',
       passwordLength: 'Password must be at least 6 characters',
       userExists: 'User already exists. Please choose another username.',
       fullNameFormat: 'Full Name should only contain letters, spaces, and hyphens',

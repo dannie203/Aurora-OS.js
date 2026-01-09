@@ -138,7 +138,7 @@ export const ro: TranslationDict = {
             noResults: 'Nicio limbă găsită',
         },
         validation: {
-            required: 'Te rugăm să completezi toate câmpurile obligatorii',
+            requiredFields: 'Te rugăm să completezi toate câmpurile obligatorii',
             passwordLength: 'Parola trebuie să aibă cel puțin 6 caractere',
             userExists: 'Utilizatorul există deja. Te rugăm să alegi un alt nume de utilizator.',
             fullNameFormat: 'Numele complet trebuie să conțină doar litere, spații și cratime',

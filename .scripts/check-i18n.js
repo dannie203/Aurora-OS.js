@@ -44,7 +44,7 @@ function getAllKeys(obj, prefix = '') {
 }
 
 async function run() {
-    const locales = ['en.ts', 'de.ts', 'es.ts', 'fr.ts', 'pt.ts', 'ro.ts'];
+    const locales = ['en.ts', 'de.ts', 'es.ts', 'fr.ts', 'pt.ts', 'ro.ts', 'zh.ts'];
     let enDict;
     try {
         enDict = await getDict('en.ts');
