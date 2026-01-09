@@ -1,0 +1,49 @@
+name: Translations Validation
+
+on:
+  pull_request:
+    branches: [ main, nightly ]
+    paths:
+      - 'scripts/**'
+      - 'src/i18n/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/translations-validate.yml'
+  push:
+    branches: [ main, nightly ]
+    paths:
+      - 'scripts/**'
+      - 'src/i18n/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/translations-validate.yml'
+
+jobs:
+  validate:
+    name: Validate i18n files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Ensure generated JSON is up-to-date
+        run: |
+          npx -y tsx scripts/ts-to-json.ts
+          if [[ -n "$(git status --porcelain src/i18n/locales-json)" ]]; then
+            echo "::error::Generated JSON is out-of-date. Run 'npm run translations:generate' and commit changes." 
+            git --no-pager diff -- src/i18n/locales-json | sed -n '1,200p'
+            exit 1
+          fi
+
+      - name: Validate translations
+        run: npx -y tsx scripts/validate-translations.ts
